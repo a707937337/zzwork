@@ -1,0 +1,26 @@
+#*
+<script type="text/javascript"src="${contextJs}/extux/Portal.js"></script>
+<script type="text/javascript"src="${contextJs}/extux/PortalColumn.js"></script>
+<script type="text/javascript"src="${contextJs}/extux/Portlet.js"></script>
+*#
+
+<script type="text/javascript"src="#springUrl('/app/welcome.js')"></script>
+<script type="text/javascript">
+Ext.onReady(function(){
+	var viewport=new Ext.Viewport({
+		layout:'border',
+		items:[
+			new Ext.TabPanel({
+    			activeTab:0,
+    			region:"center",
+    			tabPosition:"bottom",
+    			items:[
+        			new com.zz91.zzwork.mybsView({id:"bs1",title:"软件产品",bsTypes:"0"}),
+					new com.zz91.zzwork.mybsView({id:"bs2",title:"业务系统",bsTypes:"1"}),
+					new com.zz91.zzwork.mybsView({id:"bs3",title:"客户网站",bsTypes:"2"})
+    			]
+			})
+		]
+	});
+});
+</script>
