@@ -75,11 +75,14 @@ public class SorlUtil {
 		this.maxRetries = Integer.valueOf(p.getProperty("search.maxRetries"));
 	}
 	
-	
 	public SolrServer getSolrServer() {
+		return getSolrServer(null);
+	}
+	
+	public SolrServer getSolrServer(String model) {
 		CommonsHttpSolrServer server = null;
 		try {
-			server = new CommonsHttpSolrServer(url);
+			server = new CommonsHttpSolrServer(url + model);
 		} catch (MalformedURLException e) {
 			LOG.debug("An error occurred when load server：", e);
 		}

@@ -228,7 +228,7 @@ public class MailUtil {
 
     public static void main(String[] args) {
 
-//        MailUtil.API_HOST = "http://localhost:8077/zzmail";
+        MailUtil.API_HOST = "http://localhost:8077/zzmail";
 //        Date date = null;
 //        try {
 //            date = DateUtil.getDate("2011-12-13 11:30:00", "yyyy-mm-dd HH:mm:ss");
@@ -257,7 +257,7 @@ public class MailUtil {
 //        map.put("username", "testaccount1");
 //        map.put("repwdurl", "http://www.zz91.com/?account=testaccount1");
 //        MailUtil.getInstance().sendMail("邮件测试from 163", "mays@zz91.net", null, null, "test", "test", map, null);
-        MailUtil.getInstance().sendMail("邮件测试from 163", "mays@zz91.net", null, null, "test", "zz91-holiday-notice", null, null);
+        MailUtil.getInstance().sendMail("邮件测试from 163-maillist", "analysis@asto.mail", null, null, "test", "test_maillist", null, null);
 
 //        map.put("username", "testaccount1");
 //        map.put("repwdurl", "http://www.zz91.com/?account=testaccount1");
