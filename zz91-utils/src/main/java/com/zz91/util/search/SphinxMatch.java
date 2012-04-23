@@ -18,10 +18,12 @@ public class SphinxMatch
 	public int			weight;
 
 	/** Matched document attribute values. */
+	@SuppressWarnings("rawtypes")
 	public ArrayList	attrValues;
 
 
 	/** Trivial constructor. */
+	@SuppressWarnings("rawtypes")
 	public SphinxMatch ( long docId, int weight )
 	{
 		this.docId = docId;

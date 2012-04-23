@@ -7,6 +7,11 @@ package com.zz91.util.search;
 /** Exception thrown on attempts to pass invalid arguments to Sphinx API methods. */
 public class SphinxException extends Exception
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2489642231546325929L;
+
 	/** Trivial constructor. */
 	public SphinxException()
 	{
