@@ -16,7 +16,7 @@ import com.zz91.util.lang.StringUtils;
 
 
 public class SmsUtil {
-	private static String SMS_CONFIG = "mailclient.properties";
+	private static String SMS_CONFIG = "smsclient.properties";
 	private static String API_HOST="http://apps.zz91.com/zz91-sms/";
 	private static SmsUtil _instance;	
 	private static Logger LOG = Logger.getLogger(SmsUtil.class);
@@ -46,7 +46,16 @@ public class SmsUtil {
 				LOG.error("An error occurred when load sms properties:" + properties, e);
 		}
 	}
-
+	/**
+	 * 短信发送  参数
+	 * @param templateCode 模板code
+	 * @param receiver 接收电话
+	 * @param gmtSend 发送时间
+	 * @param gatewayCode 网关code
+	 * @param priority 优先级
+	 * @param content 内容
+	 * @param smsParameter 转换参数
+	 */
 	public void sendSms(String templateCode,String receiver,
 			Date gmtSend,String gatewayCode,Integer priority,String content,Map<String, Object>smsParameter){
 		if(priority==null){
@@ -67,16 +76,35 @@ public class SmsUtil {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
-	public void sendSms(String templateCode,String receiver,String content,String gatewayCode,Date gmtSend){
+	/**
+	 * 直接简单发送
+	 * @param receiver 接收电话
+	 * @param content 内容
+	 * @param gmtSend 发送时间
+	 */
+	public void sendSms(String receiver,String content,Date gmtSend){
+		sendSms(null, receiver, gmtSend, null, null, content, null);
+	}
+	
+	/**
+	 * 根据模板编号发送
+	 * @param templateCode 模板编号
+	 * @param receiver 接收电话
+	 * @param content 内容
+	 * @param gmtSend 发送时间
+	 */
+	
+	public void sendSms(String templateCode,String receiver,String content,Date gmtSend){
 		
-		sendSms(templateCode,receiver, gmtSend, gatewayCode, null, content, null);
+		sendSms(templateCode,receiver, gmtSend,null, null, content, null);
 	}
 	
 	public static void main(String[] args) throws ParseException{
 		API_HOST = "http://web.zz91.com:8080/sms/";
-		SmsUtil.getInstance().sendSms("123","13738194812", "ni hao ", "emay_jar",DateUtil.getDate("2012-04-01", "yyyy-MM-dd"));
+//		SmsUtil.getInstance().sendSms("123","13738194812", "ni hao ", "emay_jar",DateUtil.getDate("2012-04-01", "yyyy-MM-dd"));
+		SmsUtil.getInstance().sendSms("123","13486386720", "ni hao ",new Date());
+		SmsUtil.getInstance().sendSms("1356863654", "我是一个并【zz91】", new Date());
 	}
 }
