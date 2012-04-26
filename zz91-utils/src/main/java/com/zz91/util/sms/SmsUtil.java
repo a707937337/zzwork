@@ -76,7 +76,7 @@ public class SmsUtil {
 	}
 	
 	public static void main(String[] args) throws ParseException{
-		API_HOST = "http://test.zz91.com:8080/sms/";
-		SmsUtil.getInstance().sendSms("123","13486386720", "ni hao ", "123",DateUtil.getDate("2012-04-01", "yyyy-MM-dd"));
+		API_HOST = "http://web.zz91.com:8080/sms/";
+		SmsUtil.getInstance().sendSms("123","13738194812", "ni hao ", "emay_jar",DateUtil.getDate("2012-04-01", "yyyy-MM-dd"));
 	}
 }
