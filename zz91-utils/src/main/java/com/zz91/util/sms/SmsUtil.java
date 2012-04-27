@@ -21,8 +21,8 @@ public class SmsUtil {
 	private static SmsUtil _instance;	
 	private static Logger LOG = Logger.getLogger(SmsUtil.class);
 	public final static int PRIORITY_HEIGHT = 0;
-    public final static int PRIORITY_DEFAULT = 1;
-    public final static int PRIORITY_TASK = 10;
+	public final static int PRIORITY_DEFAULT = 1;
+	public final static int PRIORITY_TASK = 10;
 	
 	public synchronized static SmsUtil getInstance() {
 		if (_instance == null) {
