@@ -29,16 +29,21 @@
 	</developers>
 
 	<modules>
-	<!--	<module>zz91-work-desktop</module>-->
+		<module>zz91-work-desktop</module>
 		<module>zz91-utils</module>
 	</modules>
 
 	<dependencyManagement>
-		<dependencies>
+	<dependencies>
 		<dependency>
             		<groupId>commons-httpclient</groupId>
                 	<artifactId>commons-httpclient</artifactId>
                     	<version>3.1</version>
+        	</dependency>
+		<dependency>
+            		<groupId>com.zz91</groupId>
+                	<artifactId>zz91-utils</artifactId>
+                    	<version>1.6.5-SNAPSHOT</version>
         	</dependency>
 		<dependency>
 			<groupId>net.sf.ezmorph</groupId>
@@ -50,11 +55,6 @@
 			<artifactId>junit</artifactId>
 			<version>4.0</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.zz91</groupId>
-			<artifactId>zz91-utils</artifactId>
-			<version>1.5.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
