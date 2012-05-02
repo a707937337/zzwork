@@ -29,9 +29,7 @@
 	</developers>
 
 	<modules>
-	<!--	
 		<module>zz91-work-desktop</module>
--->
 		<module>zz91-utils</module>
 	</modules>
 
@@ -56,7 +54,7 @@
 		<dependency>
 			<groupId>com.zz91</groupId>
 			<artifactId>zz91-utils</artifactId>
-			<version>1.5.4-SNAPSHOT</version>
+			<version>1.6.6-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
@@ -232,7 +230,7 @@
 		<repository>
 			<id>zz91_repository</id>
 			<name>zz91 local artifactory</name>
-			<url>http://192.168.2.2:8081/artifactory/repo</url>
+			<url>http://192.168.2.178:8080/artifactory/repo</url>
 		</repository>
 	</repositories>
 
@@ -240,7 +238,7 @@
 		<pluginRepository>
 			<id>zz91_pluginRepository</id>
 			<name>zz91 local artifactory</name>
-			<url>http://192.168.2.2:8081/artifactory/plugins-releases</url>
+			<url>http://192.168.2.178:8080/artifactory/plugins-releases</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
