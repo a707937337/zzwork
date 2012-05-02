@@ -18,22 +18,25 @@ import com.zz91.util.lang.StringUtils;
  * <br />
  * SmsUtil 短信发送工具包 使用方法: <br />
  * 
- * 第一步：在配置文件中配置邮件api host，默认：smsclient.properties <br />
- * 例：sms.host = http://apps.zz91.com/zz91-sms/ <br />
+ * <br />第一步：在配置文件中配置邮件api host，默认：smsclient.properties 
+ * <br />例：sms.host=http://apps.zz91.com/zz91-sms
  * 
- * 第二步：初始化工具 <br />
- * SmsUtil.getInstance().init("web.properties"); <br />
- * 或 SmsUtil.getInstance().init(); 表示初始化smsclient.properties <br />
+ * <br />第二步：初始化工具
+ * <br />SmsUtil.getInstance().init("web.properties");
+ * <br />或 SmsUtil.getInstance().init(); 表示初始化smsclient.properties
+ * <br />注:系统启动时初始化
  * 
- * 第三步: 准备数据
- * templateCode: 模板code, 如果不填，则不使用模板 <br />
- * receiver: 接收电话, 必填 <br />
- * gmtSend: 定时发送短信, 不填则放入发送队列后发送短信 <br />
- * gatewayCode:	网关code <br />
- * priority: 优先级 <br />
- * content: 短信内容 <br />
+ * <br />第三步: 准备数据
+ * <br />templateCode: 模板code, 如果不填，则不使用模板
+ * <br />receiver: 接收电话, 必填
+ * <br />gmtSend: 定时发送短信, 不填或null表示立即发送
+ * <br />gatewayCode: 网关code, 不填或null表示使用默认网关发送
+ * <br />priority: 优先级
+ * <br />content: 短信内容
  * 
- * 第四步: 选择短信调用方法, 发送短信 SmsUtil.getInstance().sendSms(xxx,xxx,xxx,xxx,xxx);
+ * <br />第四步: 选择短信调用方法, 发送短信 SmsUtil.getInstance().sendSms(String templateCode, String receiver, Date gmtSend,
+			String gatewayCode, Integer priority, String content,
+			Map<String, Object> smsParameter)
  * 
  * @author root
  *
