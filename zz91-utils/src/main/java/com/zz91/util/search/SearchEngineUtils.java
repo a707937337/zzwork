@@ -7,16 +7,11 @@ package com.zz91.util.search;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import javax.sound.midi.MidiDevice.Info;
 
 import org.apache.log4j.Logger;
-
-import com.zz91.util.datetime.DateUtil;
 
 /**
  * @author mays (mays@zz91.com)
