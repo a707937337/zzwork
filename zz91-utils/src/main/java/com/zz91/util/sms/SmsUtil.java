@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Map;
 
 import net.sf.json.JSONObject;
+
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.log4j.Logger;
 
@@ -18,22 +19,25 @@ import com.zz91.util.lang.StringUtils;
  * <br />
  * SmsUtil 短信发送工具包 使用方法: <br />
  * 
- * 第一步：在配置文件中配置邮件api host，默认：smsclient.properties <br />
- * 例：sms.host = http://apps.zz91.com/zz91-sms/ <br />
+ * <br />第一步：在配置文件中配置邮件api host，默认：smsclient.properties 
+ * <br />例：sms.host=http://apps.zz91.com/zz91-sms
  * 
- * 第二步：初始化工具 <br />
- * SmsUtil.getInstance().init("web.properties"); <br />
- * 或 SmsUtil.getInstance().init(); 表示初始化smsclient.properties <br />
+ * <br />第二步：初始化工具
+ * <br />SmsUtil.getInstance().init("web.properties");
+ * <br />或 SmsUtil.getInstance().init(); 表示初始化smsclient.properties
+ * <br />注:系统启动时初始化
  * 
- * 第三步: 准备数据
- * templateCode: 模板code, 如果不填，则不使用模板 <br />
- * receiver: 接收电话, 必填 <br />
- * gmtSend: 定时发送短信, 不填则放入发送队列后发送短信 <br />
- * gatewayCode:	网关code <br />
- * priority: 优先级 <br />
- * content: 短信内容 <br />
+ * <br />第三步: 准备数据
+ * <br />templateCode: 模板code, 如果不填，则不使用模板
+ * <br />receiver: 接收电话, 必填
+ * <br />gmtSend: 定时发送短信, 不填或null表示立即发送
+ * <br />gatewayCode: 网关code, 不填或null表示使用默认网关发送
+ * <br />priority: 优先级
+ * <br />content: 短信内容
  * 
- * 第四步: 选择短信调用方法, 发送短信 SmsUtil.getInstance().sendSms(xxx,xxx,xxx,xxx,xxx);
+ * <br />第四步: 选择短信调用方法, 发送短信 SmsUtil.getInstance().sendSms(String templateCode, String receiver, Date gmtSend,
+			String gatewayCode, Integer priority, String content,
+			String[] smsParameter)
  * 
  * @author root
  *
@@ -46,7 +50,6 @@ public class SmsUtil {
 	public final static int PRIORITY_HEIGHT = 0;
 	public final static int PRIORITY_DEFAULT = 1;
 	public final static int PRIORITY_TASK = 10;
-	private static String DEFAULT_GATEWAY = "emay_jar";
 
 	public synchronized static SmsUtil getInstance() {
 		if (_instance == null) {
@@ -94,15 +97,10 @@ public class SmsUtil {
 	 */
 	public void sendSms(String templateCode, String receiver, Date gmtSend,
 			String gatewayCode, Integer priority, String content,
-			Map<String, Object> smsParameter) {
-		if (priority == null) {
-			priority = PRIORITY_DEFAULT;
-		}
-		if (gmtSend == null) {
-			gmtSend = new Date();
-		}
-		if (StringUtils.isEmpty(gatewayCode)) {
-			gatewayCode = DEFAULT_GATEWAY;
+			String[] smsParameter) {
+		String url = "sms/send.htm";
+		if(!API_HOST.endsWith("/")){
+			url = "/" + url;
 		}
 		try {
 			JSONObject js = JSONObject.fromObject(smsParameter);
@@ -115,7 +113,7 @@ public class SmsUtil {
 					new NameValuePair("priority", priority.toString()),
 					new NameValuePair("content", content),
 					new NameValuePair("dataMap", js.toString()) };
-			HttpUtils.getInstance().httpPost(API_HOST + "sms/send.htm", data,
+			HttpUtils.getInstance().httpPost(API_HOST + url, data,
 					HttpUtils.CHARSET_UTF8);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -135,6 +133,22 @@ public class SmsUtil {
 	public void sendSms(String receiver, String content, Date gmtSend) {
 		sendSms(null, receiver, gmtSend, null, null, content, null);
 	}
+	
+	/**
+	 * 带优先级简单发送
+	 * 
+	 * @param receiver
+	 *            接收电话
+	 * @param content
+	 *            内容
+	 * @param gmtSend
+	 *            发送时间
+	 * @param priority
+	 *            优先级
+	 */
+	public void sendSms(String receiver, String content,Integer priority) {
+		sendSms(null, receiver, null, null, priority, content, null);
+	}
 
 	/**
 	 * 简单发送
@@ -151,8 +165,7 @@ public class SmsUtil {
 	}
 
 	/**
-	 * 根据模板编号发送
-	 * 
+	 * 根据模板编号发送短信
 	 * @param templateCode
 	 *            模板编号
 	 * @param receiver
@@ -161,16 +174,33 @@ public class SmsUtil {
 	 *            内容
 	 * @param gmtSend
 	 *            发送时间
+	 * @param smsParameter
+	 *            模板参数
 	 */
-
 	public void sendSms(String templateCode, String receiver, String content,
-			Date gmtSend) {
-
-		sendSms(templateCode, receiver, gmtSend, null, null, content, null);
+			Date gmtSend,String[] smsParameter) {
+		sendSms(templateCode, receiver, gmtSend, null, null, content, smsParameter);
 	}
 
 	public static void main(String[] args) throws ParseException {
 		API_HOST = "http://web.zz91.com:8080/sms/";
-		SmsUtil.getInstance().sendSms("13738194812", "我是一个并【zz91】");
+//		for(int i=1;i<200;i++){
+			SmsUtil.getInstance().sendSms("13738194812", "我是一个并【zz91】");
+//		}
+		
+//		String[] s=new String[]{"2","1","3"};
+//		JSONArray ja=JSONArray.fromObject(s);
+//		System.out.println(ja.toString());
+		
+//		String sr="[\"2\",\"3\",\"1\"]";
+//		JSONArray jar=JSONArray.fromObject(sr);
+		
+//		String[] sa=new String[]{};
+//		sa=(String[]) ja.toArray(sa);
+		
+//		String str = ja.toString();
+//		JSONArray obj = JSONArray.fromObject(str);
+//		sa = (String[]) obj.toArray(sa);
+//		System.out.println(sa.toString());
 	}
 }
