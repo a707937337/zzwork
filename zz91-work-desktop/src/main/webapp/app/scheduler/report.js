@@ -1,9 +1,21 @@
 Ext.namespace("com.zz91.zzwork.scheduler.report");
+var REPORT=new function(){
+	this.REPORT_GRID="reportgrid";
+}
 
 /**
  * 映射关系
  * */
-com.zz91.zzwork.scheduler.report.Field=["id"];
+com.zz91.zzwork.scheduler.report.Field=[
+	{name:"id",mapping:"id"},
+	{name:"DeptCode",mapping:"DeptCode"},
+	{name:"account",mapping:"account"},
+	{name:"text",mapping:"text"},
+	{name:"details",mapping:"details"},
+	{name:"composeDate",mapping:"composeDate"},
+	{name:"year",mapping:"year"},
+	{name:"week",mapping:"week"}
+];
 /**
  * 汇总的日报周报列表，默认加载部门所有周报信息
  * */
@@ -38,17 +50,17 @@ com.zz91.zzwork.scheduler.report.Grid = Ext.extend(Ext.grid.GridPanel,{
 			header : "编号",
 			width : 100,
 			sortable : false,
-			dataIndex : "code"
+			dataIndex : "DeptCode"
 		},{
 			header : "报告标题",
 			width: 350,
 			sortable : false,
-			dataIndex : "title" 
+			dataIndex : "text" 
 		},{
 			header :"汇报人",
 			sortable : false,
 			width : 150,
-			dataIndex:"report",
+			dataIndex:"account",
 			renderer:function(value, metaData, record, rowIndex, colIndex, store){
 				var url=record.get("url");
 				if(url!=null && typeof(url)!="undefined" && url.length>0){
@@ -117,7 +129,7 @@ com.zz91.zzwork.scheduler.report.Form=Ext.extend(Ext.form.FormPanel,{
 					xtype:"textfield",
 					anchor:"90%",
 					fieldLabel:"标题",
-					name:"title"
+					name:"text"
 				}]
 			},{
 				columnWidth:0.5,
@@ -125,13 +137,14 @@ com.zz91.zzwork.scheduler.report.Form=Ext.extend(Ext.form.FormPanel,{
 				items:[{
 					xtype:"combo",
 					fieldLabel:"年",
+					name:"year",
 					triggerAction:"all",
 					displayField:"v",
 					anchor:"80%",
 					store:{
 						xtype:"jsonstore",
 						url:Context.ROOT+"/data/year.js",
-						//root:"years",
+						autoLoad:true,
 						fields:["k","v"]
 					}
 				}],
@@ -139,16 +152,17 @@ com.zz91.zzwork.scheduler.report.Form=Ext.extend(Ext.form.FormPanel,{
 				columnWidth:0.5,
 				layout:"form",
 				border:false,
-			    items:[{
+				items:[{
 					xtype:"combo",
-					fieldLabel:"周",
+					fieldLabel:"第几周",
 					triggerAction:"all",
+					name:"week",
 					anchor:"80%",
 					displayField:"v",
 					hiddenField:"k",
 					store:{
 						xtype:"jsonstore",
-						url:Context.ROOT+"/data/year.js",
+						url:Context.ROOT+"/data/week.js",
 						autoLoad:true,
 						fields:["k","v"]
 					}
@@ -161,10 +175,54 @@ com.zz91.zzwork.scheduler.report.Form=Ext.extend(Ext.form.FormPanel,{
 					 xtype:"textarea",
 					 hideLabel:true,
 					 height:"500",
+					 name:"details",
 					 anchor:"99%"
 				 }]
 			}],
-			buttons:[{text:"保存",handler:function(){alert("保存成功");}}]
+			buttons:[{
+				text:"保存",
+				scope:this,
+				handler : function(btn){
+					if (this.getForm().isValid()) {
+						this.getForm().submit({
+							url : Context.ROOT +  "/scheduler/report/createReport.htm",
+							method : "post",
+							type:"json",
+							success : function(_form,_action){
+								//保存事件
+								//1.获取全部事件
+																	
+								//2.分别提交report id，事件ID
+								//2.1 Grid.getSelectionModel().getSelections();
+								//2.2 /scheduler/report/createReportEvent.htm reportid eventid
+								var row=Ext.getCmp(REPORT.REPORT_GRID).getSelectionModel().getSelections();
+									for (var i=0;i<row.length;i++){
+										Ext.Ajax.request({
+											params:{"eventId":row[i].get("id"), "reportId":_action.result.data},
+											url : Context.ROOT +  "/scheduler/report/createReportEvent.htm"
+										});
+									}
+								Ext.getCmp(REPORT.REPORT_GRID).getStore().reload();
+							},
+							failure : function(_form,_action){
+								Ext.MessageBox.show({
+									title:MESSAGE.title,
+									msg : MESSAGE.saveFailure,
+									buttons:Ext.MessageBox.OK,
+									icon:Ext.MessageBox.ERROR
+								});
+							}
+						});
+					} else {
+						Ext.MessageBox.show({
+							title:MESSAGE.title,
+							msg : MESSAGE.submitFailure,
+							buttons:Ext.MessageBox.OK,
+							icon:Ext.MessageBox.ERROR
+						});
+					}
+				}
+			}]
 		};
 		com.zz91.zzwork.scheduler.report.Form.superclass.constructor.call(this, c);
 	},
@@ -188,17 +246,41 @@ com.zz91.zzwork.scheduler.report.SchedulerGrid=Ext.extend(Ext.grid.EditorGridPan
 			autoExpandColumn:2,
 			sm:new Ext.grid.CheckboxSelectionModel(),
 			store:new Ext.data.JsonStore({
-					url:Context.ROOT+"/data/grid.js",
-					root:"grid2",
-					fields:["id","schedule","performance","importance"],
+					url:Context.ROOT+"/scheduler/event/query.htm",
+					fields:[
+						{name:"id",mapping:"id"},
+						{name:"text",mapping:"text"},
+						{name:"details",mapping:"details"},
+						{name:"assignAccount",mapping:"assignAccount"},
+						{name:"ownerAccount",mapping:"ownerAccount"},
+						{name:"persent",mapping:"persent"},
+						{name:"importance",mapping:"importance"},
+						{name:"deptCode",mapping:"deptCode"}
+					],
 					autoLoad:true	
 				}),
 			cm:new Ext.grid.ColumnModel([
 					new Ext.grid.RowNumberer(),
 					new Ext.grid.CheckboxSelectionModel(),
-					{header:"日程",    dataIndex:"schedule",   width:600,sortable:true, editor:new Ext.form.TextField()},
-					{header:"完成情况",dataIndex:"performance", width:150,sortable:true, editor:new Ext.form.TextField()},
-					{header:"重要程度",dataIndex:"importance",  width:150,sortable:true, editor:new Ext.form.TextField()},
+					{
+						header:"日程",
+						dataIndex:"text",
+						width:600,
+						editor:new Ext.form.TextField(),
+						sortable:true
+					},{
+						header:"完成情况",
+						dataIndex:"persent", 
+						width:150,
+						sortable:true, 
+						editor:new Ext.form.TextField()
+					},{
+						header:"重要程度",
+						dataIndex:"importance",
+						width:150,
+						sortable:true,
+						editor:new Ext.form.TextField()
+					},
 			]),
 		};
 		

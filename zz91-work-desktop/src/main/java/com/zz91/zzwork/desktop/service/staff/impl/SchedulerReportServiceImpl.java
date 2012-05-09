@@ -25,15 +25,13 @@ public class SchedulerReportServiceImpl implements schedulerReportService{
 
 	@Override
 	public Integer createReport(SchedulerReport report) {
-		Assert.notNull(report, "the report can not be null");
-		Assert.notNull(report.getAccount(), "the account can not be null");
-		Assert.notNull(report.getText(), "the text can not be null");
-		Assert.notNull(report.getYear(), "the year can not be null");
-		Assert.notNull(report.getWeek(), "the week can not be null");
-		
+//		Assert.notNull(report, "the report can not be null");
+//		Assert.notNull(report.getAccount(), "the account can not be null");
+//		Assert.notNull(report.getText(), "the text can not be null");
+//		Assert.notNull(report.getYear(), "the year can not be null");
+//		Assert.notNull(report.getWeek(), "the week can not be null");
 		return schedulerReportDao.insertReport(report);
 	}
-
 	@Override
 	public SchedulerReport queryOneReport(Integer id) {
 		Assert.notNull(id, "the id can not be null");
@@ -46,6 +44,12 @@ public class SchedulerReportServiceImpl implements schedulerReportService{
 		Assert.notNull(year, "the year can not be null");
 		Assert.notNull(week, "the week can not be null");
 		return schedulerReportDao.queryReport(year, week, account, deptCode);
+	}
+
+	@Override
+	public Integer createReportEvent(Integer reportId, Integer eventId) {
+		
+		return schedulerReportDao.insertReportEvent(reportId, eventId);
 	}
 
 	

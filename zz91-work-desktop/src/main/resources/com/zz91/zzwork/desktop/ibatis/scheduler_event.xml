@@ -125,4 +125,10 @@
 		from scheduler_event e where e.id=#id#
 		limit 1
 	</select>
+	
+	<select id="query" resultMap="eventResult">
+		select
+			<include refid="schedulerEvent.fullColumn" />
+		from scheduler_event e
+	</select>
 </sqlMap>

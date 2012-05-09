@@ -57,8 +57,12 @@ public class EventController extends BaseController{
 		Date fromDate=null;
 		Date toDate=null;
 		try {
-			fromDate = DateUtil.getDate(from, DATE_FORMATE);
-			toDate = DateUtil.getDate(to, DATE_FORMATE);
+			if (StringUtils.isNotEmpty(from)){
+				fromDate = DateUtil.getDate(from, DATE_FORMATE);
+			}
+			if (StringUtils.isNotEmpty(to)){
+				toDate = DateUtil.getDate(to, DATE_FORMATE);
+			}
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -160,4 +164,14 @@ public class EventController extends BaseController{
 		}		
 		return printJson(result, out);
 	}
+	
+	@SuppressWarnings("unused")
+	@RequestMapping
+	private ModelAndView query(HttpServletRequest requet,Map<String, Object> out){
+		
+		List<SchedulerEvent> list=schedulerEventService.query();
+		
+		return printJson(list, out);
+	}
+	
 }

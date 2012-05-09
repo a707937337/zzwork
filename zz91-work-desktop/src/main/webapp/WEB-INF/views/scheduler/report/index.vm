@@ -20,7 +20,7 @@ Ext.onReady(function(){
 			    region:"center", 
 				layout:"fit",
 				title:"详细信息",
-				items:[new com.zz91.zzwork.scheduler.report.SchedulerGrid]
+				items:[new com.zz91.zzwork.scheduler.report.SchedulerGrid],
 			 }
 		 ]
 		})
