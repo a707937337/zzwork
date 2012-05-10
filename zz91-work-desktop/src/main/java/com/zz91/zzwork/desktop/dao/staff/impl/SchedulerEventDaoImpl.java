@@ -67,4 +67,12 @@ public class SchedulerEventDaoImpl extends BaseDao implements SchedulerEventDao{
 		return  (SchedulerEvent) getSqlMapClientTemplate().queryForObject(buildId(SQL_PREFIX, "querySchedulerEvent"), id);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<SchedulerEvent> query() {
+		
+		return getSqlMapClientTemplate().queryForList(buildId(SQL_PREFIX, "query"));
+	}
+	
+
 }

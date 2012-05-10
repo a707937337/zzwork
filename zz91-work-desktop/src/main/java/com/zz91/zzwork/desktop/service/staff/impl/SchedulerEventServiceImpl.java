@@ -42,8 +42,8 @@ public class SchedulerEventServiceImpl implements schedulerEventService{
 	@Override
 	public List<SchedulerEvent> queryEvent(Date startDate, Date endDate, String ownerAccount,
 			String deptCode) {
-		Assert.notNull(startDate, "the startDate can not be null");
-		Assert.notNull(endDate, "the to endDate not be null");
+//		Assert.notNull(startDate, "the startDate can not be null");
+//		Assert.notNull(endDate, "the to endDate not be null");
 		return schedulerEventDao.queryEvent(startDate, endDate, ownerAccount, deptCode);
 	}
 
@@ -69,4 +69,9 @@ public class SchedulerEventServiceImpl implements schedulerEventService{
 		return schedulerEventDao.updateEventProcess(id, persent, importance);
 	}
 
+	@Override
+	public List<SchedulerEvent> query() {
+		
+		return schedulerEventDao.query();
+	}
 }
