@@ -44,5 +44,8 @@ public interface SchedulerEventDao {
 	public List<SchedulerEvent> queryAssociatedEvent(Integer reportId);
 	
 	public SchedulerEvent querySchedulerEvent(Integer id);
+	
+	public List<SchedulerEvent> query();
+
 }
  

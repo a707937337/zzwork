@@ -32,5 +32,7 @@ public interface schedulerReportService {
 	 * 根据日/周报ID查找一条日/周报信息
 	 */
 	public SchedulerReport queryOneReport(Integer id);
+	
+	public Integer createReportEvent(Integer reportId,Integer eventId);
 }
  

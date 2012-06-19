@@ -18,7 +18,6 @@ import net.sf.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import com.zz91.util.auth.SessionUser;
 import com.zz91.util.encrypt.MD5;
 import com.zz91.util.http.HttpUtils;
 import com.zz91.util.lang.StringUtils;
@@ -70,6 +69,8 @@ public class EpAuthUtils {
 			epAuthUser.setUid((Integer)(json.get("uid")));
 			epAuthUser.setCid((Integer)(json.get("cid")));
 			epAuthUser.setMemberCode(json.get("memberCode").toString());
+			epAuthUser.setAccount(json.get("account").toString());
+			epAuthUser.setLoginName(json.get("loginName").toString());
 			String rights = json.get("rightList").toString();
 			rights=rights.replace("[", "").replace("]", "").replace(" ", "").replace("\"", "");
 			epAuthUser.setRightList(rights.split(","));
@@ -121,6 +122,8 @@ public class EpAuthUtils {
 			epAuthUser.setUid((Integer)(json.get("uid")));
 			epAuthUser.setCid((Integer)(json.get("cid")));
 			epAuthUser.setMemberCode(json.get("memberCode").toString());
+			epAuthUser.setAccount(json.get("account").toString());
+			epAuthUser.setLoginName(json.get("loginName").toString());
 			epAuthUser.setTicket(ticket);
 			String rights = json.get("rightList").toString();
 			rights=rights.replace("[", "").replace("]", "").replace(" ", "").replace("\"", "");

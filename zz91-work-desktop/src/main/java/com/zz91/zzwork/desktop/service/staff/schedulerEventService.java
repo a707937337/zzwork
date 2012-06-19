@@ -45,5 +45,7 @@ public interface schedulerEventService {
 	 */
 	public List<SchedulerEvent> queryAssociatedEvent(Integer reportId);
 	
+	public List<SchedulerEvent> query();
+
 }
  

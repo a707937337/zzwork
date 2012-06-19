@@ -5,7 +5,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.Map;
 
-import net.sf.json.JSONObject;
+import net.sf.json.JSONArray;
 
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.log4j.Logger;
@@ -62,7 +62,7 @@ public class SmsUtil {
 		init(SMS_CONFIG);
 	}
 
-	private void init(String properties) {
+	public void init(String properties) {
 		if (StringUtils.isEmpty(properties)) {
 			properties = SMS_CONFIG;
 		}
@@ -103,7 +103,7 @@ public class SmsUtil {
 			url = "/" + url;
 		}
 		try {
-			JSONObject js = JSONObject.fromObject(smsParameter);
+			JSONArray js = JSONArray.fromObject(smsParameter);
 			NameValuePair[] data = {
 					new NameValuePair("templateCode", templateCode),
 					new NameValuePair("receiver", receiver),
@@ -112,7 +112,7 @@ public class SmsUtil {
 					new NameValuePair("gatewayCode", gatewayCode),
 					new NameValuePair("priority", priority.toString()),
 					new NameValuePair("content", content),
-					new NameValuePair("dataMap", js.toString()) };
+					new NameValuePair("smsParameter", js.toString()) };
 			HttpUtils.getInstance().httpPost(API_HOST + url, data,
 					HttpUtils.CHARSET_UTF8);
 		} catch (IOException e) {
@@ -131,7 +131,7 @@ public class SmsUtil {
 	 *            发送时间
 	 */
 	public void sendSms(String receiver, String content, Date gmtSend) {
-		sendSms(null, receiver, gmtSend, null, null, content, null);
+		sendSms(null, receiver, gmtSend, null, PRIORITY_DEFAULT, content, null);
 	}
 	
 	/**
@@ -161,7 +161,7 @@ public class SmsUtil {
 	 *            发送时间
 	 */
 	public void sendSms(String receiver, String content) {
-		sendSms(null, receiver, null, null, null, content, null);
+		sendSms(null, receiver, null, null, PRIORITY_DEFAULT, content, null);
 	}
 
 	/**
@@ -179,13 +179,14 @@ public class SmsUtil {
 	 */
 	public void sendSms(String templateCode, String receiver, String content,
 			Date gmtSend,String[] smsParameter) {
-		sendSms(templateCode, receiver, gmtSend, null, null, content, smsParameter);
+		sendSms(templateCode, receiver, gmtSend, null, PRIORITY_DEFAULT, content, smsParameter);
 	}
 
 	public static void main(String[] args) throws ParseException {
 		API_HOST = "http://web.zz91.com:8080/sms/";
 //		for(int i=1;i<200;i++){
-			SmsUtil.getInstance().sendSms("13738194812", "我是一个并【zz91】");
+//			SmsUtil.getInstance().sendSms("13738194812", "我是一个并【zz91】");
+			SmsUtil.getInstance().sendSms("sms_product", "13738194812", null, null, new String[]{"1","2","3","4"});
 //		}
 		
 //		String[] s=new String[]{"2","1","3"};

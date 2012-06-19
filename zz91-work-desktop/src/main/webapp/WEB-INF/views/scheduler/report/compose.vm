@@ -2,17 +2,83 @@
 
 <script type="text/javascript">
 Ext.onReady(function(){
-    var form=new com.zz91.zzwork.scheduler.report.Form;
-    var schedulerGrid=new com.zz91.zzwork.scheduler.report.SchedulerGrid();
-    var toolbar=new Ext.Toolbar({
-		items:[
-			{xtype:"button",text:"删除",handler:function(){alert("删除成功")}},
-			"->",
-			{xtype:"radio",boxLabel:"日报",name:"radio"},
-			"-",
-			{xtype:"radio",boxLabel:"周报",name:"radio"}	
-		]
+	var form=new com.zz91.zzwork.scheduler.report.Form;
+	var schedulerGrid=new com.zz91.zzwork.scheduler.report.SchedulerGrid({
+		id:REPORT.REPORT_GRID
 	});
+	var toolbar=new Ext.Toolbar({
+		items:[{
+			xtype:"button",
+			text:"删除",
+			iconCls : 'delete16',
+			handler:function(){
+				var row=Ext.getCmp(REPORT.REPORT_GRID).getSelectionModel().getSelections();
+					if(row.length>0){
+					Ext.MessageBox.confirm(Context.MSG_TITLE,'是否要删除选择的'+row.length+'记录数?',function(_btn){
+						if(_btn!="yes")
+							return;
+						for(var i=0;i<row.length;i++){
+							Ext.Ajax.request({
+								url:Context.ROOT +  "/scheduler/event/eventDeleted.htm",
+								params:{"id":row[i].get("id")},
+								success:function(response,opt){
+									var obj = Ext.decode(response.responseText);
+									if(obj.success){
+										alert("删除成功");
+										Ext.getCmp(REPORT.REPORT_GRID).getStore().reload();
+										}else{
+											Ext.MessageBox.show({
+												title:MESSAGE.title,
+												msg : MESSAGE.saveFailure,
+												buttons:Ext.MessageBox.OK,
+												icon:Ext.MessageBox.ERROR
+											});
+										}
+									},
+								failure:function(response,opt){
+									Ext.MessageBox.show({
+										title:MESSAGE.title,
+										msg : MESSAGE.submitFailure,
+										buttons:Ext.MessageBox.OK,
+										icon:Ext.MessageBox.ERROR
+									});
+								}
+							})
+						}
+					});
+				}
+			}
+		},"->",{
+				xtype:"checkbox",
+					boxLabel:"日报",
+					inputValue:1,
+					handler:function(btn){
+						var B=schedulerGrid.store.baseParams||{};
+						if(btn.getValue()){
+							B["day"]="1";
+						}else{
+							B["day"]=undefined;
+						}
+						schedulerGrid.store.baseParams = B;
+						schedulerGrid.store.reload({params:{"start":0,"limit":Context.PAGE_SIZE}});
+					}
+		},"-",{
+				xtype:"checkbox",
+					boxLabel:"周报",
+					inputValue:1,
+					handler:function(btn){
+						var B=schedulerGrid.store.baseParams||{};
+						if(btn.getValue()){
+							B["week"]="1";
+						}else{
+							B["week"]=undefined;
+						}
+						schedulerGrid.store.baseParams = B;
+						schedulerGrid.store.reload({params:{"start":0,"limit":Context.PAGE_SIZE}});
+					}
+				}	
+			]
+		});
 	schedulerGrid.add(toolbar);
 	new Ext.Viewport({
 		layout:"border",
