@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="attendance">
+     
+	<typeAlias alias="attendance" type="com.zz91.zzwork.desktop.domain.hr.Attendance"/>
+	<resultMap class="attendance" id="attendanceResult">
+	 <result property="id" column="id"/>
+	 <result property="name" column="name"/>
+	 <result property="code" column="code"/>
+	 <result property="account" column="account"/>
+	 <result property="gmt_work" column="gmtWork"/>
+	 <result property="gmt_created" column="gmtCreated"/>
+	 <result property="gmt_modeified" column="gmtModeified"/>
+	
+	</resultMap>
+	<select id="getAllattendance" parameterClass="java.util.HashMap" resultClass="attendanceResult">
+	select  att.id,att.name,att.code,att.gmt_work from(select  att.id,att.name,att.code,att.gmt_work from  attendance  att
+	 where name = #name# and code = #code# and gmt_work = #gmtWork#) where between #page.start# and #page.start+20#
+	   
+	</select>
+	
+	<select id="getAttendanceCount" parameterClass="java.util.Date" resultClass="java.lang.Integer">
+	  select  att.id,att.name,att.code,att.gmt_work from  attendance  att where gmt_work = #gmtWork#
+	</select>
+	<insert id="addAttendance" parameterClass="attendance">
+	    insert into attendance
+	   (
+	   name,
+	   code,
+	   gmt_work,
+	   gmt_created,
+	   gmt_modeified
+	   )
+	   values
+	   (
+	   #name#,
+	   #code#,
+	   #gmtwork#,
+	    now,
+	    now 
+	   )
+	   <selectKey keyProperty="id" resultClass="java.lang.Integer">
+	   select last_insert_id()
+	   </selectKey>
+	</insert>
+	
+	<delete id="deleteAttendance" parameterClass="java.util.HashMap">
+	 delete from attendance where gmt_work between #fromdate# and #todate#
+	</delete>
+</sqlMap>

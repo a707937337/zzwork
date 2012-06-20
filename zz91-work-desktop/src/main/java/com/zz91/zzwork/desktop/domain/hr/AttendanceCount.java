@@ -7,12 +7,13 @@ import java.util.Date;
  * @author root
  *
  */
+@SuppressWarnings("serial")
 public class AttendanceCount  implements Serializable {
 
 	/**
 	 * 员工出勤统计信息
 	 */
-	private static final long serialVersionUID = 1L;
+	private static long serialVersionUID = 1L;
 	private Integer id;
 	private String  name;
 	private String  code;
@@ -20,6 +21,7 @@ public class AttendanceCount  implements Serializable {
 	private Integer punch0;
 	private Integer punch20;
 	private Integer punch60;
+	private Integer punch80;
 	private Integer punchCount;
 	private Date    gmtMonth;
 	private Date    gmtCreated;
@@ -83,6 +85,15 @@ public class AttendanceCount  implements Serializable {
 	}
 	public void setPunch60(Integer punch60) {
 		this.punch60 = punch60;
+	}
+	public Integer getPunch80() {
+		return punch80;
+	}
+	public void setPunch80(Integer punch80) {
+		this.punch80 = punch80;
+	}
+	public static void setSerialversionuid(long serialversionuid) {
+		serialVersionUID = serialversionuid;
 	}
 	public Integer getPunchCount() {
 		return punchCount;
