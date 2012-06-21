@@ -18,8 +18,7 @@
 	
 	</resultMap>
 	<select id="getAllattendance" parameterClass="java.util.HashMap" resultClass="attendanceResult">
-	select  att.id,att.name,att.code,att.gmt_work from(select  att.id,att.name,att.code,att.gmt_work from  attendance  att
-	 where name = #name# and code = #code# and gmt_work = #gmtWork#) where between #page.start# and #page.start+20#
+	
 	   
 	</select>
 	
@@ -51,4 +50,7 @@
 	<delete id="deleteAttendance" parameterClass="java.util.HashMap">
 	 delete from attendance where gmt_work between #fromdate# and #todate#
 	</delete>
+	<select id="getAttByDate" parameterClass="java.util.HashMap" resultClass="attendanceResult">
+	   select  att.name,att.code,att.gmt_work from attendance att where gmt_work between #from# and #to#
+	</select>
 </sqlMap>

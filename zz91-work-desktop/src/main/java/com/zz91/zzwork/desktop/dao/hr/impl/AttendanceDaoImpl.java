@@ -48,10 +48,13 @@ public class AttendanceDaoImpl extends BaseDao implements AttendanceDao {
 		return (Integer)this.getSqlMapClientTemplate().queryForObject("getAttendanceCount", gmtWork);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Integer queryByGmtWork(Date from, Date to) {
-		 
-		return null;
+	public List<Attendance> queryByGmtWork(Date from, Date to) {
+		 Map<String, Date>  fromdateto = new HashMap<String, Date>();
+		 fromdateto.put("from", from);
+		 fromdateto.put("to", to);
+		return this.getSqlMapClientTemplate().queryForList("getAttByDate", fromdateto);
 	}
 
 	

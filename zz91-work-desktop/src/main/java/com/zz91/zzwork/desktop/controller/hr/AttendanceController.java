@@ -34,12 +34,12 @@ public class AttendanceController extends BaseController {
 
 	@RequestMapping
 	public void impt(HttpServletRequest request, Map<String, Object> out) {
-
+                    
 	}
 
 	@RequestMapping
 	public ModelAndView doImpt(Date from, Date to) {
-
+               
 		return null;
 	}
 
