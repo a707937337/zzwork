@@ -73,8 +73,6 @@ public class CacheFragmentDirective extends Directive {
 		Node keyNode=node.jjtGetChild(0);
 		String cacheEnable=(String) node.jjtGetChild(2).value(context);
 		String cacheExpired=(String) node.jjtGetChild(3).value(context);
-		
-		
 		String url=(String) keyNode.value(context);
 		if(StringUtils.isEmpty(url)){
 			return false;
@@ -112,9 +110,11 @@ public class CacheFragmentDirective extends Directive {
 				MemcachedUtils.getInstance().getClient().set(cacheKey, exp, html);
 			}
 		}
-		
-		write.write(html);
-		
+		try {
+			write.write(html);
+		} finally {
+			write.close();
+		}
 		return true;
 	}
 
@@ -129,9 +129,7 @@ public class CacheFragmentDirective extends Directive {
 		} catch (IOException e1) {
 			LOG.error("Failed connect to api. error msg:"+e1.getMessage()+" url:"+url);
 		}
-
 		try {
-			
 			if(StringUtils.isEmpty(responseText)){
 				return "";
 			}
@@ -147,7 +145,9 @@ public class CacheFragmentDirective extends Directive {
 			Node bodyNode=node.jjtGetChild(4);
 			Writer tempWriter=new StringWriter();
 			bodyNode.render(context, tempWriter);
-			return tempWriter.toString();
+			String result = tempWriter.toString();
+			tempWriter.close();
+			return result;
 		} catch (MalformedURLException e) {
 			LOG.error("Failed build html. error msg:"+e.getMessage()+" url:"+url);
 		} catch (IOException e) {
