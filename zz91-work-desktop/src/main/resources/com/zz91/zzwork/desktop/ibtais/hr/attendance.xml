@@ -24,6 +24,17 @@
 	
 	<select id="getAttendanceCount" parameterClass="java.util.Date" resultClass="java.lang.Integer">
 	  select  att.id,att.name,att.code,att.gmt_work from  attendance  att where gmt_work = #gmtWork#
+    <!-- 
+    
+    select * from
+    (
+    select name,code,gmt_work, min(gmt_work) from attendance group by code, DATE_FORMAT(FROM_UNIXTIME(gmt_work),"%Y-%m-%d") where gmt_work between #from# and #to# UNION ALL 
+    select name,code,gmt_work, max(gmt_work) from attendance group by code, DATE_FORMAT(FROM_UNIXTIME(gmt_work),"%Y-%m-%d") where gmt_work between #from# and #to#
+    )
+     
+     -->
+      
+      
 	</select>
 	<insert id="addAttendance" parameterClass="attendance">
 	    insert into attendance
@@ -52,5 +63,6 @@
 	</delete>
 	<select id="getAttByDate" parameterClass="java.util.HashMap" resultClass="attendanceResult">
 	   select  att.name,att.code,att.gmt_work from attendance att where gmt_work between #from# and #to#
+	   
 	</select>
 </sqlMap>

@@ -17,13 +17,14 @@ public class AttendanceCount  implements Serializable {
 	private Integer id;
 	private String  name;
 	private String  code;
-	private String  account;
+	private String  account;//系统中的账号
 	private Integer punch0;
 	private Integer punch20;
 	private Integer punch60;
 	private Integer punch80;
 	private Integer punchCount;
-	private Date    gmtMonth;
+	private Date    gmtMonth;//统计的月份
+	private Date    gmtWork;//问题数据的具体时间
 	private Date    gmtCreated;
 	private Date    modeified;
 	public AttendanceCount() {
@@ -106,6 +107,12 @@ public class AttendanceCount  implements Serializable {
 	}
 	public void setGmtMonth(Date gmtMonth) {
 		this.gmtMonth = gmtMonth;
+	}
+	public Date getGmtWork() {
+		return gmtWork;
+	}
+	public void setGmtWork(Date gmtWork) {
+		this.gmtWork = gmtWork;
 	}
 	public Date getGmtCreated() {
 		return gmtCreated;

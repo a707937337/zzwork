@@ -1,5 +1,7 @@
 package com.zz91.zzwork.desktop.controller.hr;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.Date;
 import java.util.Map;
 
@@ -8,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zz91.zzwork.desktop.controller.BaseController;
@@ -23,12 +27,14 @@ public class AttendanceController extends BaseController {
 
 	@RequestMapping
 	public void index(HttpServletRequest request,Map<String, Object> out) {
-
+        
 	}
 
 	@RequestMapping
 	public ModelAndView query(String name, String code, Date gmtWork,
-			PageDto<Attendance> page) {
+			PageDto<Attendance> page ,Map<String, Object> out) {
+		PageDto<Attendance>  attendances = attendanceService.pageAttendance(name, code,gmtWork, page);
+		out.put("attendances",attendances);
 		return null;
 	}
 
@@ -38,8 +44,13 @@ public class AttendanceController extends BaseController {
 	}
 
 	@RequestMapping
-	public ModelAndView doImpt(Date from, Date to) {
-               
+	public ModelAndView doImpt(@RequestParam(value = "file", required = false) MultipartFile file, HttpServletRequest request, Date from, Date to,Map<String, Object> out) throws FileNotFoundException {
+          StringBuffer  sb  = new StringBuffer();
+          sb.append(request.getSession().getServletContext().getRealPath("doImpt"));
+		  sb.append("\\");
+          sb.append(file.getOriginalFilename());
+          attendanceService.impt(from, to, new FileInputStream(sb.toString()));
+          
 		return null;
 	}
 
