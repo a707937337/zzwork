@@ -1,7 +1,6 @@
 package com.zz91.zzwork.desktop.controller.hr;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
 
@@ -10,12 +9,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zz91.zzwork.desktop.controller.BaseController;
 import com.zz91.zzwork.desktop.domain.hr.Attendance;
+import com.zz91.zzwork.desktop.domain.hr.FileUploadBean;
 import com.zz91.zzwork.desktop.dto.PageDto;
 import com.zz91.zzwork.desktop.service.hr.AttendanceService;
 
@@ -44,14 +43,15 @@ public class AttendanceController extends BaseController {
 	}
 
 	@RequestMapping
-	public ModelAndView doImpt(@RequestParam(value = "file", required = false) MultipartFile file, HttpServletRequest request, Date from, Date to,Map<String, Object> out) throws FileNotFoundException {
-          StringBuffer  sb  = new StringBuffer();
-          sb.append(request.getSession().getServletContext().getRealPath("doImpt"));
-		  sb.append("\\");
-          sb.append(file.getOriginalFilename());
-          attendanceService.impt(from, to, new FileInputStream(sb.toString()));
-          
-		return null;
+	public ModelAndView doImpt(HttpServletRequest request, Date from, Date to,Map<String, Object> out,Object command) {
+        FileUploadBean bean = (FileUploadBean)command;
+        MultipartFile file = bean.getFile();
+        try {
+			attendanceService.impt(from, to, file.getInputStream());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	    return null;
 	}
 
 }

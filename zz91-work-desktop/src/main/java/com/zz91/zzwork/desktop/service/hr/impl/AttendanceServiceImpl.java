@@ -1,6 +1,5 @@
 package com.zz91.zzwork.desktop.service.hr.impl;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -29,7 +28,7 @@ public class AttendanceServiceImpl implements AttendanceService {
     private AttendanceDao  attendanceDao;
 	
 	@Override
-	public Boolean impt(Date from, Date to,FileInputStream inputStream) {
+	public Boolean impt(Date from, Date to,InputStream inputStream) {
 		Boolean b = false;
 		try {
 			List<Attendance> atts =  inputExcel(from, to, inputStream);
