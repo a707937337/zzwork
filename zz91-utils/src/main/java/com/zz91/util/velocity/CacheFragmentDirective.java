@@ -110,11 +110,7 @@ public class CacheFragmentDirective extends Directive {
 				MemcachedUtils.getInstance().getClient().set(cacheKey, exp, html);
 			}
 		}
-		try {
-			write.write(html);
-		} finally {
-			write.close();
-		}
+		write.write(html);
 		return true;
 	}
 
@@ -154,8 +150,10 @@ public class CacheFragmentDirective extends Directive {
 			LOG.error("Failed build html. error msg:"+e.getMessage()+" url:"+url);
 		}
 		return "";
+		
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		String url="http://test.zz9l.com:8080/fragment/common/companyDetails.htm?cid=627461";
 		try {
