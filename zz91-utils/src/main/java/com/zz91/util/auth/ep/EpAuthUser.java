@@ -22,6 +22,8 @@ public class EpAuthUser implements Serializable{
 	private Integer uid;	//会员ID 
 	private String memberCode;	//会员等级编号
 	private Integer cid;	//公司信息
+	private String account;	//帐号
+	private String loginName; //姓名
 	private String[] rightList;	//该公司所拥有的会员权利列表
 	
 	private String vticket;
@@ -91,6 +93,21 @@ public class EpAuthUser implements Serializable{
 	public void setKey(String key) {
 		this.key = key;
 	}
-	
-	
+
+	public String getAccount() {
+		return account;
+	}
+
+	public void setAccount(String account) {
+		this.account = account;
+	}
+
+	public String getLoginName() {
+		return loginName;
+	}
+
+	public void setLoginName(String loginName) {
+		this.loginName = loginName;
+	}
+
 }
