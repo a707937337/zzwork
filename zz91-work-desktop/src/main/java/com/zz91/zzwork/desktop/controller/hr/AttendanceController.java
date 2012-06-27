@@ -39,19 +39,20 @@ public class AttendanceController extends BaseController {
 
 	@RequestMapping
 	public void impt(HttpServletRequest request, Map<String, Object> out) {
-                    
+		
 	}
 
 	@RequestMapping
 	public ModelAndView doImpt(HttpServletRequest request, Date from, Date to,Map<String, Object> out,Object command) {
-        FileUploadBean bean = (FileUploadBean)command;
-        MultipartFile file = bean.getFile();
-        try {
+		/****FileUploadBean bean = (FileUploadBean)command;
+		MultipartFile file = bean.getFile();
+		try {
 			attendanceService.impt(from, to, file.getInputStream());
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-	    return null;
+		}****/
+	       System.out.println("sssss");
+		return null;
 	}
 
 }

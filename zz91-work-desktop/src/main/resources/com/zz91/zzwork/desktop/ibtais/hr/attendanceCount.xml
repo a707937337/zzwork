@@ -19,17 +19,43 @@
 	    <result property="gmt_created" column="gmtCreated"/>
 	    <result property="gmt_modeified" column="gmtModeified"/>
 	   </resultMap>
-	   
+	   <sql id="filed">
+	   name,
+	   code,
+	   punch0,
+	   punch20,
+	   punch60,
+	   punch80,
+	   punch_count,
+	   gmt_work
+	   </sql>
+	   <sql id="query_Condition">
+	   <dynamic prepend="where">
+	   <isNotEmpty property="name" prepend="and">
+	     name=#name#
+	   </isNotEmpty>
+	   <isNotEmpty property="gmt_work" prepend="and">
+	     gmt_work=#gmt_work#
+	   </isNotEmpty>
+	   </dynamic>
+	   </sql>
 	  <select id="selectAttendanceCount" parameterClass="java.util.Map" resultClass="attendanceCountResult">
-	    
+	    select
+	    <include refid="filed"/>
+	    from attendanceCode
+	    <include refid="query_Condition"/>
+	    <include refid="common.pageOrderBy"/>
+	    <include refid="common.pageLimit"/>
 	  </select>
 	  
 	  <select id="countByNameAndDate" parameterClass="java.util.Map" resultClass="attendanceCountResult">
-	    select *  from attendanceCount where name = #name# and gmt_work = #gmtwork#
+	    select
+	    <include refid="filed"/>
+	    from attendanceCount where name = #name# and gmt_work = #gmtWork#
 	  </select>
 	  
 	  <insert id="addAttendanceCount" parameterClass="attendanceCount">
-	   insert into attendancecount
+	   insert into attendanceCount
 	   (
 	   name,
 	   code,
@@ -50,7 +76,7 @@
 	   #punch20#,
 	   #punch80#,
 	   #punch_count#,
-	   #gmtwork#,
+	   #gmtWork#,
 	    now,
 	    now 
 	   )

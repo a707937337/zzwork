@@ -1,1 +1,23 @@
-$!{test}
+
+<script type="text/javascript" src="#springUrl('/app/hr/impt.js	')"></script>
+
+<script type="text/javascript" >
+	Ext.onReady(function(){
+		//com.zz91.zzwork.hr.ImptWin(function(){
+		//	window.location.href=Context.ROOT+"/index.htm";
+		//});
+		
+		var form=new com.zz91.zzwork.hr.ImptForm({
+			region:"center"
+		});
+		
+		//alert(1)
+		
+		var viewport = new Ext.Viewport({
+			layout:"border",
+			items:[form]
+		});
+	
+		form.initFocus();
+	});
+</script>

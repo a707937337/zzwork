@@ -1,0 +1,21 @@
+<script type="text/javascript" src="#springUrl('/app/hr/index.js	')"></script>
+<script type="text/javascript" >
+	Ext.onReady(function(){
+		//com.zz91.zzwork.hr.ImptWin(function(){
+		//	window.location.href=Context.ROOT+"/index.htm";
+		//});
+		
+		var attendanceForm=new com.zz91.zzwork.hr.AttendanceInForm({
+			region:"center"
+		});
+		
+		//alert(1)
+		
+		var viewport = new Ext.Viewport({
+			layout:"border",
+			items:[attendanceForm]
+		});
+	
+		attendanceForm.initFocus();
+	});
+</script>

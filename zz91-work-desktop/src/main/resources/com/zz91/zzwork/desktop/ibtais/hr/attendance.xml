@@ -17,13 +17,37 @@
 	 <result property="gmt_modeified" column="gmtModeified"/>
 	
 	</resultMap>
+	<sql id="filed">
+	   name,
+	   code,
+	   gmt_work,
+	   gmt_created,
+	   gmt_modeified
+	</sql>
+	<sql id="query_Condition">
+	  <dynamic prepend="where">
+	      <isNotEmpty property="name" prepend="and">
+	       name=#name#
+	      </isNotEmpty>
+	      <isNotEmpty property="code" prepend="and">
+	       code=#code#
+	      </isNotEmpty>
+	      <isNotEmpty property="gmt_work" prepend="and">
+	       gmt_work=#gmtWork#
+	      </isNotEmpty>
+	  </dynamic>
+	</sql>
 	<select id="getAllattendance" parameterClass="java.util.HashMap" resultClass="attendanceResult">
-	
-	   
+	     select 
+	     <include refid="filed"/>
+	     from attendance 
+	     <include refid="query_Condition"/>
+	     <include refid="common.pageOrderBy" />
+		 <include refid="common.pageLimit" />
 	</select>
 	
 	<select id="getAttendanceCount" parameterClass="java.util.Date" resultClass="java.lang.Integer">
-	  select  att.id,att.name,att.code,att.gmt_work from  attendance  att where gmt_work = #gmtWork#
+	  select  att.id,att.name,att.code,att.gmt_work from  attendance att where gmt_work = #gmtWork#
     <!-- 
     
     select * from
@@ -62,7 +86,7 @@
 	 delete from attendance where gmt_work between #fromdate# and #todate#
 	</delete>
 	<select id="getAttByDate" parameterClass="java.util.HashMap" resultClass="attendanceResult">
-	   select  att.name,att.code,att.gmt_work from attendance att where gmt_work between #from# and #to#
+	   select name,code,gmt_work from attendance where gmt_work between #from# and #to#
 	   
 	</select>
 </sqlMap>
