@@ -39,7 +39,7 @@ public class AttendanceController extends BaseController {
 
 	@RequestMapping
 	public void impt(HttpServletRequest request, Map<String, Object> out) {
-		
+		System.out.println("sssss");
 	}
 
 	@RequestMapping

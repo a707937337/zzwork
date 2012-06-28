@@ -1,7 +1,7 @@
-<script type="text/javascript" src="#springUrl('/app/hr/attResult.js')"></script>
+<script type="text/javascript" src="#springUrl('/app/hr/attCountResult.js')"></script>
 <script type="text/javascript" >
 	Ext.onReady(function(){
-		var attendanceTab = new com.zz91.zzwork.hr.AttendanceTable({
+		var attCountTab = new com.zz91.zzwork.hr.AttCountTable({
 			region:"center",
 			split:true,
 			height:350
@@ -9,7 +9,7 @@
 		var viewport = new Ext.Viewport({
 			layout:"border",
 			items:
-			[attendanceTab]
+			[attCountTab]
 		});
 	});
 

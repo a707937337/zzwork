@@ -26,12 +26,12 @@ public class AttendanceCount  implements Serializable {
 	private Date    gmtMonth;//统计的月份
 	private Date    gmtWork;//问题数据的具体时间
 	private Date    gmtCreated;
-	private Date    modeified;
+	private Date    gmtModeified;
 	public AttendanceCount() {
 		
 	}
     public AttendanceCount(Integer id,String name,String code,String account,Integer punch0,Integer punch20,
-    		Integer punch60,Integer punchCount,Date gmtMonth,Date gmtCreated,Date modeified) {
+    		Integer punch60,Integer punchCount,Date gmtMonth,Date gmtCreated,Date gmtModeified) {
     	this.id =id;
     	this.name= name;
     	this.code= code;
@@ -42,7 +42,7 @@ public class AttendanceCount  implements Serializable {
     	this.punchCount = punchCount;
     	this.gmtCreated = gmtCreated;
     	this.gmtMonth  = gmtMonth;
-    	this.modeified = modeified;
+    	this.gmtModeified = gmtModeified;
 		
 	}
 	public Integer getId() {
@@ -120,11 +120,11 @@ public class AttendanceCount  implements Serializable {
 	public void setGmtCreated(Date gmtCreated) {
 		this.gmtCreated = gmtCreated;
 	}
-	public Date getModeified() {
-		return modeified;
+	public Date getGmtModeified() {
+		return gmtModeified;
 	}
-	public void setModeified(Date modeified) {
-		this.modeified = modeified;
+	public void setGmtModeified(Date gmtModeified) {
+		this.gmtModeified = gmtModeified;
 	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;
