@@ -25,7 +25,7 @@ import com.zz91.zzwork.desktop.service.hr.AttendanceService;
 public class AttendanceServiceImpl implements AttendanceService {
 	  
 	@Resource
-    private AttendanceDao  attendanceDao;
+    private AttendanceDao attendanceDao;
 	
 	@Override
 	public Boolean impt(Date from, Date to,InputStream inputStream) {
@@ -40,19 +40,18 @@ public class AttendanceServiceImpl implements AttendanceService {
 			// TODO: handle exception
 		   e.printStackTrace();
 		}
-		
-       return b;
-		
+		return b;
 	}
 
 	@Override
 	public PageDto<Attendance> pageAttendance(String name, String code,
-		      Date gmtWork, PageDto<Attendance> page) {
+		Date gmtWork, PageDto<Attendance> page) {
 		page.setRecords(attendanceDao.queryAttendance(name, code, gmtWork, page));
 		page.setTotalRecords(attendanceDao.queryAttendanceCount(name, code, gmtWork));
 		return page;
 	}
-    
+	
+	
 	@SuppressWarnings("deprecation")
 	public List<Attendance> inputExcel(Date from, Date to,InputStream inputStream)
 	{    StringBuffer  sb = null;
@@ -83,7 +82,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 							sb.append(cell.getDateCellValue().toString());
 							sb.append(",");
 						} else {
-                             sb.append(cell.getNumericCellValue()+",");
+						sb.append(cell.getNumericCellValue()+",");
 						}
 						
 						break;
@@ -107,6 +106,6 @@ public class AttendanceServiceImpl implements AttendanceService {
 		
 		e.printStackTrace();
 	}
-		return  atts;
+		return atts;
 	}
 }

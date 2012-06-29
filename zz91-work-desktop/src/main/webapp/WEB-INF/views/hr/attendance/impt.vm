@@ -11,7 +11,6 @@
 			region:"center"
 		});
 		
-		//alert(1)
 		
 		var viewport = new Ext.Viewport({
 			layout:"border",
@@ -19,5 +18,7 @@
 		});
 	
 		form.initFocus();
+		
 	});
 </script>
+$!{testkey}

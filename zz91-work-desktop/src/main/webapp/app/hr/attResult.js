@@ -18,7 +18,7 @@ com.zz91.zzwork.hr.AttendanceTable = Ext.extend(Ext.grid.GridPanel,{
 			totalProperty:"totalRecords",//返回的是totalRecords的条数
 			remoteSort:true,
 			fields:com.zz91.zzwork.hr.DtoFields,
-			url:Context.ROOT+"/feedback/queryFeedback.htm",
+			//url:Context.ROOT+"/feedback/queryFeedback.htm",
 			autoLoad:true
 		});
 		var grid = this;

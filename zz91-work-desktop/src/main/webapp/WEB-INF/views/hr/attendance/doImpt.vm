@@ -1,5 +1,6 @@
 <script type="text/javascript" src="#springUrl('/app/hr/attResult.js')"></script>
 <script type="text/javascript" >
+
 	Ext.onReady(function(){
 		var attendanceTab = new com.zz91.zzwork.hr.AttendanceTable({
 			region:"center",

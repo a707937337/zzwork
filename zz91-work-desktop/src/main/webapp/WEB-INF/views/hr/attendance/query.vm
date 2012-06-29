@@ -1,0 +1,8 @@
+<script type="text/javascript" src="#springUrl('/app/hr/countview.js')"></script>
+<script type="text/javascript" >
+	Ext.onReady(function(){
+		com.zz91.zzwork.hr.countWin(function(){
+			//window.location.href=Context.ROOT+"/index.htm";
+		});
+	});
+</script
