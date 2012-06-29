@@ -19,6 +19,7 @@ public class CodeCachedUtil {
 	public final static String CACHE_TYPE_NEWS="cn";
 	public final static String CACHE_TYPE_EXHIBIT="ce";
 	public final static String CACHE_TYPE_PARAM = "pa";
+	public final static String CACHE_TYPE_SUBNET = "sb";// 环保子网类别
 	
 	public final static Integer EXPIRATION=0;
 	
