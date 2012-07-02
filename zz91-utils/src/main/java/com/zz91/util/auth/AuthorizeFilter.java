@@ -59,7 +59,7 @@ public class AuthorizeFilter implements Filter {
 			
 			SessionUser sessionUser = AuthUtils.getInstance().getSessionUser(request, null);
 			String tickkey=HttpUtils.getInstance().getCookie(request, AuthConst.TICKET_KEY, AuthConst.SSO_DOMAIN);
-			if(sessionUser == null || !tickkey.equals(tickkey)){
+			if(sessionUser == null || !tickkey.equals(sessionUser.getTicket())){
 //				sessionUser = AuthUtils.getInstance().validateTicket(request, projectCode, projectPassword);
 				sessionUser = AuthUtils.getInstance().validateTicket(request, AuthConst.PROJECT_CODE, AuthConst.PROJECT_PASSWORD);
 				if(sessionUser==null){

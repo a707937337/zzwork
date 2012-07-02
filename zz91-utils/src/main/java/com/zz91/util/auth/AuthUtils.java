@@ -193,7 +193,7 @@ public class AuthUtils {
 		return map;
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public List<JSONObject> queryStaffByDept(String deptCode){
 		URL url;
 		List<JSONObject> list=new ArrayList<JSONObject>();
