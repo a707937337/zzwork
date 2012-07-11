@@ -13,6 +13,7 @@ import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -20,9 +21,40 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 
 public class HttpUtils {
 
-//	private final static Logger LOG = Logger.getLogger(HttpUtils.class);
+	// private final static Logger LOG = Logger.getLogger(HttpUtils.class);
 
 	private static HttpUtils _instance = null;
+
+	private static MultiThreadedHttpConnectionManager httpConnectionManager = new MultiThreadedHttpConnectionManager();
+
+	private static HttpClient client = new HttpClient(httpConnectionManager);
+
+	static {
+
+		// 每主机最大连接数和总共最大连接数，通过hosfConfiguration设置host来区分每个主机
+
+		client.getHttpConnectionManager().getParams()
+				.setDefaultMaxConnectionsPerHost(8);
+
+		client.getHttpConnectionManager().getParams()
+				.setMaxTotalConnections(48);
+
+		client.getHttpConnectionManager().getParams()
+				.setConnectionTimeout(5000);
+
+		client.getHttpConnectionManager().getParams().setSoTimeout(5000);
+
+		client.getHttpConnectionManager().getParams().setTcpNoDelay(true);
+
+		client.getHttpConnectionManager().getParams().setLinger(1000);
+
+		// 失败的情况下会进行3次尝试,成功之后不会再尝试
+
+		client.getHttpConnectionManager().getParams().setParameter(
+				HttpMethodParams.RETRY_HANDLER,
+				new DefaultHttpMethodRetryHandler());
+
+	}
 
 	public static synchronized HttpUtils getInstance() {
 		if (_instance == null) {
@@ -48,7 +80,7 @@ public class HttpUtils {
 		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
 			ip = request.getRemoteAddr();
 		}
-		
+
 		return ip;
 	}
 
@@ -105,59 +137,68 @@ public class HttpUtils {
 		}
 		return null;
 	}
-	
-	public final static String CHARSET_DEFAULT="ISO-8859-1";
-	public final static String CHARSET_UTF8="utf-8";
-	public final static int HTTP_CONNECT_TIMEOUT=10000;
-	public final static int HTTP_SO_TIMEOUT=120000;
+
+	public final static String CHARSET_DEFAULT = "ISO-8859-1";
+	public final static String CHARSET_UTF8 = "utf-8";
+	public final static int HTTP_CONNECT_TIMEOUT = 10000;
+	public final static int HTTP_SO_TIMEOUT = 120000;
 
 	/**
 	 * 默认连接10秒超时，数据读取120秒超时
+	 * 
 	 * @param url
 	 * @param charset
 	 * @return
 	 * @throws HttpException
 	 * @throws IOException
 	 */
-	public String httpGet(String url, String charset) throws HttpException, IOException {
+	public String httpGet(String url, String charset) throws HttpException,
+			IOException {
 		return httpGet(url, charset, HTTP_CONNECT_TIMEOUT, HTTP_SO_TIMEOUT);
 	}
-	
+
 	/**
-	 * @param url：请求的URL
-	 * @param charset：编码
-	 * @param connectionTimeout：连接超时时间，单位毫秒
-	 * @param soTimeout：数据读取超时时间，单位毫秒
+	 * @param url
+	 *            ：请求的URL
+	 * @param charset
+	 *            ：编码
+	 * @param connectionTimeout
+	 *            ：连接超时时间，单位毫秒
+	 * @param soTimeout
+	 *            ：数据读取超时时间，单位毫秒
 	 * @return
 	 * @throws HttpException
 	 * @throws IOException
 	 */
-	public String httpGet(String url, String charset, int connectionTimeout, int soTimeout) throws HttpException, IOException{
-		if(charset == null){
-			charset=HttpUtils.CHARSET_DEFAULT;
+	public String httpGet(String url, String charset, int connectionTimeout,
+			int soTimeout) throws HttpException, IOException {
+		if (charset == null) {
+			charset = HttpUtils.CHARSET_DEFAULT;
 		}
 		String responseString = "";
 		// 构造HttpClient的实例
-		HttpClient httpClient = new HttpClient();
+		// HttpClient httpClient = new HttpClient();
 		// 创建GET方法的实例
 		GetMethod getMethod = new GetMethod(url);
+
 		// 使用系统提供的默认的恢复策略
 		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
 				new DefaultHttpMethodRetryHandler(0, false));
 		getMethod.getParams().setContentCharset(charset);
-		
-		httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(connectionTimeout);
-		httpClient.getHttpConnectionManager().getParams().setSoTimeout(soTimeout);
-		
+
+		// httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(connectionTimeout);
+		// httpClient.getHttpConnectionManager().getParams().setSoTimeout(soTimeout);
+
 		try {
 			// 执行getMethod
-			int statusCode = httpClient.executeMethod(getMethod);
+			int statusCode = client.executeMethod(getMethod);
 			if (statusCode == HttpStatus.SC_OK) {
-//				// 读取内容
-//				byte[] responseBody = getMethod.getResponseBody();
-//				// 处理内容
-//				responseString = new String(responseBody);
-				responseString = httpResponseAsString(getMethod.getResponseBodyAsStream(), charset);
+				// // 读取内容
+				// byte[] responseBody = getMethod.getResponseBody();
+				// // 处理内容
+				// responseString = new String(responseBody);
+				responseString = httpResponseAsString(getMethod
+						.getResponseBodyAsStream(), charset);
 			}
 		} finally {
 			// 释放连接
@@ -165,88 +206,98 @@ public class HttpUtils {
 		}
 		return responseString;
 	}
-	
-	public String httpPost(String url, NameValuePair[] data, String charset) throws HttpException, IOException{
-		return httpPost(url, data, charset, HTTP_CONNECT_TIMEOUT, HTTP_SO_TIMEOUT);
+
+	public String httpPost(String url, NameValuePair[] data, String charset)
+			throws HttpException, IOException {
+		return httpPost(url, data, charset, HTTP_CONNECT_TIMEOUT,
+				HTTP_SO_TIMEOUT);
 	}
-	
+
 	/**
 	 * @param url
 	 * @param data
 	 *            : NameValuePair[] data = { new NameValuePair("id",
 	 *            "youUserName"), new NameValuePair("passwd", "yourPwd") };
-	 * @param charset: 针对post后返回的页面设置字符编码
+	 * @param charset
+	 *            : 针对post后返回的页面设置字符编码
 	 * @return
 	 * @throws HttpException
 	 * @throws IOException
 	 */
-	public String httpPost(String url, NameValuePair[] data, String charset, int connectionTimeout, int soTimeout) throws HttpException, IOException {
-		if(charset==null){
+	public String httpPost(String url, NameValuePair[] data, String charset,
+			int connectionTimeout, int soTimeout) throws HttpException,
+			IOException {
+		if (charset == null) {
 			charset = CHARSET_DEFAULT;
 		}
-		HttpClient httpClient = new HttpClient();
-		httpClient.getParams().setContentCharset(charset);
-		
-		httpClient.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, charset);
-		
-		httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(connectionTimeout);
-		httpClient.getHttpConnectionManager().getParams().setSoTimeout(soTimeout);
-		
+		// HttpClient httpClient = new HttpClient();
+		client.getParams().setContentCharset(charset);
+
+		client.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET,
+				charset);
+
+		// httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(connectionTimeout);
+		// httpClient.getHttpConnectionManager().getParams().setSoTimeout(soTimeout);
+
 		PostMethod postMethod = new PostMethod(url);
 		// 将表单的值放入postMethod中
 		postMethod.setRequestBody(data);
 		// 执行postMethod
-		String responseString="";
+		String responseString = "";
 		try {
-			int statusCode = httpClient.executeMethod(postMethod);
-			if(statusCode==HttpStatus.SC_OK){
-//				responseString = new String(postMethod.getResponseBody());
-				responseString = httpResponseAsString(postMethod.getResponseBodyAsStream(), charset);
+			int statusCode = client.executeMethod(postMethod);
+			if (statusCode == HttpStatus.SC_OK) {
+				// responseString = new String(postMethod.getResponseBody());
+				responseString = httpResponseAsString(postMethod
+						.getResponseBodyAsStream(), charset);
 			}
-		} finally{
+		} finally {
 			postMethod.releaseConnection();
 		}
 		return responseString;
 		// 暂不处理301/302转向
 		// HttpClient对于要求接受后继服务的请求，象POST和PUT等不能自动处理转发
 		// 301或者302
-//		if (statusCode == HttpStatus.SC_MOVED_PERMANENTLY
-//				|| statusCode == HttpStatus.SC_MOVED_TEMPORARILY) {
-//			// 从头中取出转向的地址
-//			Header locationHeader = postMethod.getResponseHeader("location");
-//			String location = null;
-//			if (locationHeader != null) {
-//				location = locationHeader.getValue();
-//				System.out.println("The page was redirected to:" + location);
-//			} else {
-//				System.err.println("Location field value is null.");
-//			}
-//		}
+		// if (statusCode == HttpStatus.SC_MOVED_PERMANENTLY
+		// || statusCode == HttpStatus.SC_MOVED_TEMPORARILY) {
+		// // 从头中取出转向的地址
+		// Header locationHeader = postMethod.getResponseHeader("location");
+		// String location = null;
+		// if (locationHeader != null) {
+		// location = locationHeader.getValue();
+		// System.out.println("The page was redirected to:" + location);
+		// } else {
+		// System.err.println("Location field value is null.");
+		// }
+		// }
 	}
-	
-	public String httpResponseAsString(InputStream is, String encode) throws IOException{
-		if(is==null){
+
+	public String httpResponseAsString(InputStream is, String encode)
+			throws IOException {
+		if (is == null) {
 			return "";
 		}
-		
-		StringBuffer out=new StringBuffer();
-		String line ;
+
+		StringBuffer out = new StringBuffer();
+		String line;
 		try {
-			BufferedReader reader=new BufferedReader(new InputStreamReader(is, encode));
-			while ((line=reader.readLine())!=null) {
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					is, encode));
+			while ((line = reader.readLine()) != null) {
 				out.append(line).append("\n");
 			}
-		} finally{
-			if(is!=null){
+		} finally {
+			if (is != null) {
 				is.close();
 			}
 		}
 		return out.toString();
 	}
-	
+
 	public static void main(String[] args) {
 		try {
-			HttpUtils.getInstance().httpGet("http://www.example2.com:8080/", CHARSET_UTF8);
+			System.out.println(HttpUtils.getInstance().httpGet("http://www.zz91.com/",
+					CHARSET_UTF8));
 		} catch (HttpException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
