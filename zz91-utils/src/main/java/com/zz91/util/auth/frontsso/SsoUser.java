@@ -28,9 +28,12 @@ public class SsoUser implements Serializable{
 	private String areaCode;
 	private String serviceCode;
 	
+	@Deprecated
 	private String vticket;
 	private String ticket;
+	@Deprecated
 	private String key;
+	
 	
 	public final static String SESSION_KEY="zz91authorizesession";
 	
@@ -133,12 +136,14 @@ public class SsoUser implements Serializable{
 	/**
 	 * @return the vticket
 	 */
+	@Deprecated
 	public String getVticket() {
 		return vticket;
 	}
 	/**
 	 * @param vticket the vticket to set
 	 */
+	@Deprecated
 	public void setVticket(String vticket) {
 		this.vticket = vticket;
 	}
@@ -157,12 +162,14 @@ public class SsoUser implements Serializable{
 	/**
 	 * @return the key
 	 */
+	@Deprecated
 	public String getKey() {
 		return key;
 	}
 	/**
 	 * @param key the key to set
 	 */
+	@Deprecated
 	public void setKey(String key) {
 		this.key = key;
 	}

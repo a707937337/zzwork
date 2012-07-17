@@ -7,18 +7,18 @@ package com.zz91.util.auth.frontsso;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.security.NoSuchAlgorithmException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
+import net.sf.json.JSONObject;
+
+import org.apache.commons.httpclient.HttpException;
 
 import com.zz91.util.encrypt.MD5;
+import com.zz91.util.exception.AuthorizeException;
 import com.zz91.util.http.HttpUtils;
 import com.zz91.util.lang.StringUtils;
 
@@ -42,27 +42,18 @@ public class SsoUtils{
 		}
 		return _instance;
 	}
-	
-	private final static int TIMEOUT=100000;  //TODO 发布后改为10秒＝10000
-	
-	public static void main(String[] args) {
-		try {
-			System.out.println(MD5.encode("admin"));
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
+
 	/**
 	 * 发送消息包含：account，password，projectCode
 	 * ticket=account+password+projectCode+projectPassword+key
 	 * 返回信息包含：sessionUser，ticket，key
+	 * @throws IOException 
+	 * @throws AuthorizeException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws HttpException 
 	 */
-	public SsoUser validateUser(HttpServletResponse response, String account, String password, Integer expired){
+	public SsoUser validateUser(HttpServletResponse response, String account, String password, Integer expired, String ip) 
+			throws HttpException, NoSuchAlgorithmException, AuthorizeException, IOException{
 		String encodePwd="";
 		try {
 			encodePwd = MD5.encode(password);
@@ -72,45 +63,43 @@ public class SsoUtils{
 			e.printStackTrace();
 		}
 		
-		return validateUserByEncodePwd(response,account,encodePwd,expired);
+		return validateUserByEncodePwd(response, account, encodePwd, expired, ip);
 	}
 	
-	public SsoUser validateUserByEncodePwd(HttpServletResponse response, String account, String password, Integer expired){
+	public SsoUser validateUserByEncodePwd(HttpServletResponse response, String account, String password, Integer expired, String ip) 
+			throws AuthorizeException, HttpException, IOException, NoSuchAlgorithmException {
 		SsoUser ssoUser = null;
-			try {
-				String encodeAccount = URLEncoder.encode(account, "utf-8");
-				//提交给服务器验证
-				URL url = new URL(SsoConst.API_HOST+"/ssoUser.htm?a="+encodeAccount+"&p="+password);
-				Document doc = Jsoup.parse(url, TIMEOUT);
-				//验证返回结果是否正确
-				String key=doc.select("#key").val();
-				String ticket=doc.select("#ticket").val();
-				if(StringUtils.isEmpty(key) || StringUtils.isEmpty(ticket)){
-					return null;
-				}
-				
-				String validateTicket=MD5.encode(account+password+key);
-				if(!ticket.equals(validateTicket)){
-					return null;
-				}
-				
-				ssoUser = new SsoUser();
-				ssoUser.setAccount(doc.select("#account").val());
-				ssoUser.setAccountId(Integer.valueOf(doc.select("#accountId").val()));
-				ssoUser.setAreaCode(doc.select("#areaCode").val());
-				ssoUser.setCompanyId(Integer.valueOf(doc.select("#companyId").val()));
-				ssoUser.setEmail(doc.select("#email").val());
-				ssoUser.setMembershipCode(doc.select("#membershipCode").val());
-				ssoUser.setServiceCode(doc.select("#serviceCode").val());
-				ssoUser.setZstFlag(doc.select("#zstFlag").val());
-				
-				HttpUtils.getInstance().setCookie(response, SsoConst.TICKET_KEY, ticket, SsoConst.SSO_DOMAIN, null);
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (NoSuchAlgorithmException e) {
-				e.printStackTrace();
-			}
+		String encodeAccount = URLEncoder.encode(account, "utf-8");
 		
+		String result = HttpUtils.getInstance().httpGet(SsoConst.API_HOST+"/validationUser.htm?a="+encodeAccount+"&p="+password+"&ip="+ip, HttpUtils.CHARSET_UTF8);
+		
+		JSONObject resultJson = JSONObject.fromObject(result);
+		
+		if(StringUtils.isEmpty(resultJson.getString("error"))){
+			throw new AuthorizeException(resultJson.getString("error"));
+		}
+
+		String key=resultJson.getString("key");
+		String ticket=resultJson.getString("ticket");
+		if(StringUtils.isEmpty(key) || StringUtils.isEmpty(ticket)){
+			throw new AuthorizeException(AuthorizeException.ERROR_SERVER);
+		}
+		
+		String validateTicket=MD5.encode(account+password+key);
+		if(!ticket.equals(validateTicket)){
+			throw new AuthorizeException(AuthorizeException.ERROR_SERVER);
+		}
+		
+		if(resultJson.getString("ssoUser").equals("null")){
+			ssoUser = (SsoUser) JSONObject.toBean(resultJson.getJSONObject("ssoUser"), SsoUser.class);
+		}
+		
+		if(ssoUser==null){
+			throw new AuthorizeException(AuthorizeException.ERROR_SERVER);
+		}
+		
+		HttpUtils.getInstance().setCookie(response, SsoConst.TICKET_KEY, ticket, SsoConst.SSO_DOMAIN, null);
+				
 		return ssoUser;
 	}
 	
@@ -120,41 +109,45 @@ public class SsoUtils{
 	 * 返回信息包含：SessionUser，vticket，key
 	 */
 	public SsoUser validateTicket(HttpServletRequest request){
-		URL url;
+		
 		SsoUser ssoUser = null;
 		String ticket=HttpUtils.getInstance().getCookie(request, SsoConst.TICKET_KEY, SsoConst.SSO_DOMAIN);
-		if(StringUtils.isEmpty(ticket)){
+		
+		String result=null;
+		try {
+			result = HttpUtils.getInstance().httpGet(SsoConst.API_HOST+"/validationTicket.htm?t="+ticket, HttpUtils.CHARSET_UTF8);
+		} catch (HttpException e1) {
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		if(result==null){
 			return null;
 		}
+		
+		JSONObject resultJson = JSONObject.fromObject(result);
+		
+		String key = resultJson.getString("key");
+		String vticket = resultJson.getString("vticket");
+		
+		if(StringUtils.isEmpty(key) || StringUtils.isEmpty(vticket)){
+			return null;
+		}
+		
+		String velidateTicket="";
 		try {
-			url = new URL(SsoConst.API_HOST+"/ssoTicket.htm?t="+ticket);
-			Document doc = Jsoup.parse(url, TIMEOUT);
-			String key = doc.select("#key").val();
-//			String vticket = doc.select("#vticket").val();
-			if(StringUtils.isEmpty(key)){   //|| StringUtils.isEmpty(vticket)
-				return null;
-			}
-			//验证vticket
-//			String velidateTicket = MD5.encode(key+ticket);
-//			if(!velidateTicket.equals(vticket)){
-//				return null;
-//			}
-			
-			ssoUser = new SsoUser();
-			ssoUser.setAccount(doc.select("#account").val());
-			ssoUser.setAccountId(Integer.valueOf(doc.select("#accountId").val()));
-			ssoUser.setAreaCode(doc.select("#areaCode").val());
-			ssoUser.setCompanyId(Integer.valueOf(doc.select("#companyId").val()));
-			ssoUser.setEmail(doc.select("#email").val());
-			ssoUser.setMembershipCode(doc.select("#membershipCode").val());
-			ssoUser.setServiceCode(doc.select("#serviceCode").val());
-			ssoUser.setZstFlag(doc.select("#zstFlag").val());
-			ssoUser.setTicket(ticket);
-			
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+			velidateTicket = MD5.encode(key+ticket);
+		} catch (NoSuchAlgorithmException e) {
+		} catch (UnsupportedEncodingException e) {
+		}
+		
+		if(!velidateTicket.equals(vticket)){
+			return null;
+		}
+		
+		if(resultJson.getString("ssoUser").equals("null")){
+			ssoUser = (SsoUser) JSONObject.toBean(resultJson.getJSONObject("ssoUser"), SsoUser.class);
 		}
 		
 		return ssoUser;
@@ -163,14 +156,12 @@ public class SsoUtils{
 	public void logout(HttpServletRequest request, HttpServletResponse response, String sessionid){
 		//得到票据，重置cookie
 		String ticket=HttpUtils.getInstance().getCookie(request, SsoConst.TICKET_KEY, SsoConst.SSO_DOMAIN);
-		URL url;
 		try {
-			url = new URL(SsoConst.API_HOST+"/ssoLogout.htm?t="+ticket);
-			Jsoup.parse(url, TIMEOUT);
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+			HttpUtils.getInstance().httpGet(SsoConst.API_HOST+"ssoLogout.htm?t="+ticket, HttpUtils.CHARSET_UTF8);
+		} catch (HttpException e1) {
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
 		clearnSessionUser(request, sessionid);
 		HttpUtils.getInstance().setCookie(response, SsoConst.TICKET_KEY, null, SsoConst.SSO_DOMAIN, 0);
@@ -209,4 +200,5 @@ public class SsoUtils{
 			// TODO 使用memcached实现
 		}
 	}
+	
 }
