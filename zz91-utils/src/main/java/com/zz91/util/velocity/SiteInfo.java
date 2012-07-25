@@ -15,6 +15,7 @@ import com.zz91.util.param.ParamUtils;
  *
  * created on 2011-6-13
  */
+@Deprecated
 public class SiteInfo {
 	
 	private static String PROP_KEY = "site_info_front"; 

@@ -28,6 +28,7 @@ import com.zz91.util.lang.StringUtils;
  * @author Ryan
  *
  */
+@Deprecated
 public class HomePageFilter implements Filter {
 
 	private static Logger LOG =Logger.getLogger(HomePageFilter.class);

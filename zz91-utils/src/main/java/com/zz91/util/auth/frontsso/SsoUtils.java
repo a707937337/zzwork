@@ -20,6 +20,7 @@ import org.apache.commons.httpclient.HttpException;
 import com.zz91.util.encrypt.MD5;
 import com.zz91.util.exception.AuthorizeException;
 import com.zz91.util.http.HttpUtils;
+import com.zz91.util.http.SessionUtils;
 import com.zz91.util.lang.StringUtils;
 
 
@@ -28,7 +29,7 @@ import com.zz91.util.lang.StringUtils;
  *
  * created on 2011-6-13
  */
-public class SsoUtils{
+public class SsoUtils extends SessionUtils{
 
 	private static SsoUtils _instance=null;
 	
@@ -42,7 +43,7 @@ public class SsoUtils{
 		}
 		return _instance;
 	}
-
+	
 	/**
 	 * 发送消息包含：account，password，projectCode
 	 * ticket=account+password+projectCode+projectPassword+key
@@ -75,10 +76,15 @@ public class SsoUtils{
 		
 		JSONObject resultJson = JSONObject.fromObject(result);
 		
-		if(StringUtils.isEmpty(resultJson.getString("error"))){
+		//TODO error code 返回逻辑
+		if(resultJson.containsKey("error") && !StringUtils.isEmpty(resultJson.getString("error"))){
 			throw new AuthorizeException(resultJson.getString("error"));
 		}
 
+		if(!resultJson.containsKey("key") || !resultJson.containsKey("ticket") || !resultJson.containsKey("ssoUser")){
+			throw new AuthorizeException(AuthorizeException.ERROR_SERVER);
+		}
+		
 		String key=resultJson.getString("key");
 		String ticket=resultJson.getString("ticket");
 		if(StringUtils.isEmpty(key) || StringUtils.isEmpty(ticket)){
@@ -90,7 +96,7 @@ public class SsoUtils{
 			throw new AuthorizeException(AuthorizeException.ERROR_SERVER);
 		}
 		
-		if(resultJson.getString("ssoUser").equals("null")){
+		if(!resultJson.getString("ssoUser").equals("null")){
 			ssoUser = (SsoUser) JSONObject.toBean(resultJson.getJSONObject("ssoUser"), SsoUser.class);
 		}
 		
@@ -128,6 +134,10 @@ public class SsoUtils{
 		
 		JSONObject resultJson = JSONObject.fromObject(result);
 		
+		if(!resultJson.containsKey("key") || !resultJson.containsKey("vticket")){
+			return null;
+		}
+		
 		String key = resultJson.getString("key");
 		String vticket = resultJson.getString("vticket");
 		
@@ -146,7 +156,7 @@ public class SsoUtils{
 			return null;
 		}
 		
-		if(resultJson.getString("ssoUser").equals("null")){
+		if(!resultJson.getString("ssoUser").equals("null")){
 			ssoUser = (SsoUser) JSONObject.toBean(resultJson.getJSONObject("ssoUser"), SsoUser.class);
 		}
 		
@@ -201,4 +211,15 @@ public class SsoUtils{
 		}
 	}
 	
+	public String getSID(){
+		return SsoConst.SESSION_KEY;
+	}
+	
+	public String getDomain(){
+		return SsoConst.SSO_DOMAIN;
+	}
+	
+	public Integer getSessionAge(){
+		return 69*60;
+	}
 }

@@ -126,7 +126,7 @@ public class MailUtil {
             NameValuePair[] data = { new NameValuePair("sender", sender), new NameValuePair("receiver", receiver),
                     new NameValuePair("sendName", sendName), new NameValuePair("senderPassword", senderPassword),
                     new NameValuePair("emailTitle", title), new NameValuePair("templateId", templateId),
-                    new NameValuePair("gmtPostStr", DateUtil.toString(gmtPost, "yyyy-mm-dd HH:mm:ss")),
+                    new NameValuePair("gmtPostStr", DateUtil.toString(gmtPost, "yyyy-MM-dd HH:mm:ss")),
                     new NameValuePair("accountCode", accountCode), new NameValuePair("dataMap", js.toString()),
                     new NameValuePair("priority", priority.toString()) };
             // NameValuePair[] data = { new NameValuePair("email",

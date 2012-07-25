@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 
-
+@Deprecated
 public class LoggerUtils {
 	private static HashMap<String,Logger> loggerMap=new HashMap<String,Logger>();
 	private static final String DEFAULT_LOGGER="[out info]";

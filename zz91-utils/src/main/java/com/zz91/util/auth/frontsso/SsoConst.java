@@ -14,6 +14,7 @@ public class SsoConst {
 	public static String API_HOST="http://passport.zz91.com/api";
 	public static String SSO_DOMAIN="zz91.com";
 	public final static String TICKET_KEY="zz91ssotoken";
+	public final static String SESSION_KEY="ZZSID";
 	
 	private String api;
 	private String domain;

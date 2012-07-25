@@ -12,6 +12,7 @@ import com.zz91.util.search.SearchEngineUtils;
  * @author mays (mays@zz91.net)
  *
  */
+@Deprecated
 public class CodeCachedUtil {
 
 	public final static String CACHE_TYPE_AREA="ca";

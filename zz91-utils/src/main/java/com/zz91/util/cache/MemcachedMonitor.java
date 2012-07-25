@@ -10,6 +10,7 @@ package com.zz91.util.cache;
  *
  * created on 2010-12-13
  */
+@Deprecated
 public class MemcachedMonitor {
 
 }
