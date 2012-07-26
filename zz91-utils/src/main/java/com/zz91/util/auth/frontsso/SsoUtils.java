@@ -167,7 +167,7 @@ public class SsoUtils extends SessionUtils{
 		//得到票据，重置cookie
 		String ticket=HttpUtils.getInstance().getCookie(request, SsoConst.TICKET_KEY, SsoConst.SSO_DOMAIN);
 		try {
-			HttpUtils.getInstance().httpGet(SsoConst.API_HOST+"ssoLogout.htm?t="+ticket, HttpUtils.CHARSET_UTF8);
+			HttpUtils.getInstance().httpGet(SsoConst.API_HOST+"/ssoLogout.htm?t="+ticket, HttpUtils.CHARSET_UTF8);
 		} catch (HttpException e1) {
 			e1.printStackTrace();
 		} catch (IOException e1) {
