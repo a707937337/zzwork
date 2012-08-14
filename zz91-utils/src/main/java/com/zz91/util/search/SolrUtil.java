@@ -5,51 +5,51 @@
  */
 package com.zz91.util.search;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
-import org.apache.solr.client.solrj.impl.BinaryRequestWriter;
-import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
+import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.impl.StreamingUpdateSolrServer;
 
+import com.zz91.util.file.FileUtils;
+import com.zz91.util.http.HttpUtils;
 import com.zz91.util.lang.StringUtils;
 import com.zz91.util.seo.SeoUtil;
 
 /**
- * 请使用 SolrUtil 提供的方法
- * @author totly (totly@huanbao.com)
+ * @author mays (mays@asto.com.cn)
  * 
- *         created on 2012-01-05
+ *         created on 2012-08-10
  */
-@Deprecated
-public class SorlUtil {
+public class SolrUtil {
 	
 	private static Logger LOG = Logger.getLogger(SeoUtil.class);
 	
 	private String DEFAULT_PROP = "search.properties";
 	
-	private String url="http://localhost:8080/solr";
+	private String url="http://192.168.2.178:8080/solr";
 	// 连接超时
 	private Integer soTimeout = 10000;
 	private Integer connectionTimeout = 10000;
-	// 每个主机的默认最大连接数
-	private Integer defaultMaxConnectionsPerHost = 100000;
-	// 最大连接
-	private Integer maxTotalConnections = 200000;
-	// 最大重试
-	private Integer maxRetries = 1;
+//	// 每个主机的默认最大连接数
+//	private Integer defaultMaxConnectionsPerHost = 100;
+//	// 最大连接
+//	private Integer maxTotalConnections = 100;
+//	// 最大重试
+//	private Integer maxRetries = 0;
 	
-	private static SorlUtil _instance;
+	private static SolrUtil _instance;
+	
+//	private final static Map<String, CommonsHttpSolrServer> SOLR_SERVER=new HashMap<String, CommonsHttpSolrServer>();
 	
 	
-	public static synchronized SorlUtil getInstance(){
+	
+	public static synchronized SolrUtil getInstance(){
 		if(_instance==null){
-			_instance =new SorlUtil();
+			_instance =new SolrUtil();
 		}
 		return _instance;
 	}
@@ -58,23 +58,25 @@ public class SorlUtil {
 		init(DEFAULT_PROP);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void init(String properties) {
 		// 从配置文件读取搜索参数信息
 		LOG.debug("Loading search properties:" + properties);
-		InputStream is = this.getClass().getClassLoader().getResourceAsStream(
-				properties);
-		Properties p = new Properties();
+		
 		try {
-			p.load(is);
+			
+			Map<String, Object> map = FileUtils.readPropertyFile(properties, HttpUtils.CHARSET_UTF8);
+			this.url=(String) map.get("search.url");
+			this.soTimeout = Integer.valueOf(map.get("search.soTimeout").toString());
+			this.connectionTimeout = Integer.valueOf(map.get("search.connectionTimeout").toString());
+//			this.defaultMaxConnectionsPerHost =  Integer.valueOf(map.get("search.defaultMaxConnectionsPerHost").toString());
+//			this.maxTotalConnections = Integer.valueOf(map.get("search.maxTotalConnections").toString());
+//			this.maxRetries =  Integer.valueOf(map.get("search.maxRetries").toString());
+			LOG.debug("Finish loading search properties:" + properties);
 		} catch (IOException e) {
-			LOG.error("An error occurred when load search properties:" + properties, e);
+//			LOG.debug("Error loading search properties:" + StacktraceUtil.getStackTrace(e));
 		}
-		this.url = p.getProperty("search.url");
-		this.soTimeout = Integer.valueOf(p.getProperty("search.soTimeout"));
-		this.connectionTimeout = Integer.valueOf(p.getProperty("search.connectionTimeout"));
-		this.defaultMaxConnectionsPerHost = Integer.valueOf(p.getProperty("search.defaultMaxConnectionsPerHost"));
-		this.maxTotalConnections = Integer.valueOf(p.getProperty("search.maxTotalConnections"));
-		this.maxRetries = Integer.valueOf(p.getProperty("search.maxRetries"));
+		
 	}
 	
 	public SolrServer getSolrServer() {
@@ -82,27 +84,37 @@ public class SorlUtil {
 	}
 	
 	public SolrServer getSolrServer(String model) {
-		CommonsHttpSolrServer server = null;
-		try {
-			server = new CommonsHttpSolrServer(url + model);
-		} catch (MalformedURLException e) {
-			LOG.debug("An error occurred when load server：", e);
+		
+		if(StringUtils.isEmpty(model)){
+			model="";
 		}
-        server.setSoTimeout(soTimeout);
-        // 连接超时
-        server.setConnectionTimeout(connectionTimeout);
-        // 每个主机的默认最大连接数
-        server.setDefaultMaxConnectionsPerHost(defaultMaxConnectionsPerHost);
-        // 最大连接
-        server.setMaxTotalConnections(maxTotalConnections);
-        // 最大重试
-        server.setMaxRetries(maxRetries);
-        // 跟踪重定向
-        server.setFollowRedirects(false);
-        // 允许压缩
-        server.setAllowCompression(true);
-        // 提升性能采用流输出方式
-        server.setRequestWriter(new BinaryRequestWriter());
+		
+		model=model.replace("\\/", "");
+		
+		StreamingUpdateSolrServer server = null;
+		try {
+			server = new StreamingUpdateSolrServer(url+"/"+model, 100, 3);
+			
+			server.setSoTimeout(soTimeout);
+	        // 连接超时
+	        server.setConnectionTimeout(connectionTimeout);
+//	        // 每个主机的默认最大连接数
+//	        server.setDefaultMaxConnectionsPerHost(defaultMaxConnectionsPerHost);
+//	        // 最大连接
+//	        server.setMaxTotalConnections(maxTotalConnections);
+//	        // 最大重试
+//	        server.setMaxRetries(maxRetries);
+//	        // 跟踪重定向
+//	        server.setFollowRedirects(false);
+//	        // 允许压缩
+//	        server.setAllowCompression(true);
+//	        // 提升性能采用流输出方式
+//	        server.setRequestWriter(new BinaryRequestWriter());
+	        
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		
 		return server;
 	}
 	

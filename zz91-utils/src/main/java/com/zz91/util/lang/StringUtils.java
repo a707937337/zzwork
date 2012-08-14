@@ -5,6 +5,8 @@
  */
 package com.zz91.util.lang;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -336,7 +338,7 @@ public class StringUtils {
 		return bool;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public static String getCollectionStringBySplit(Collection collection, String split) {
 		return getArrayStringBySplit(collection.toArray(), split);
 	}
@@ -389,4 +391,13 @@ public class StringUtils {
         }
         return sb.toString();
     }
+	
+	public static String getStackTrace(Throwable t){
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw, true);
+		t.printStackTrace(pw);
+		pw.flush();
+		sw.flush();
+		return sw.toString();
+	}
 }
