@@ -117,7 +117,7 @@
 				<artifactId>tomcat-maven-plugin</artifactId>
 				<configuration>
 					<path>/work</path>
-					<port>880</port>
+					<port>8080</port>
 				</configuration>
 			</plugin>
 		</plugins>

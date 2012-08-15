@@ -15,37 +15,47 @@ import com.zz91.zzwork.desktop.dto.PageDto;
 
 @Component("attendanceDao")
 public class AttendanceDaoImpl extends BaseDao implements AttendanceDao {
-
+	
+	final static String SQL_PREFIX="attendance";
+	
 	@Override
 	public Integer deleteAttendance(Date from, Date to) {
 		Map<String, Object> datetodate = new HashMap<String, Object>();
-		datetodate.put("fromdate", from);
-		datetodate.put("todate", to);
-		return this.getSqlMapClientTemplate().delete("deleteAttendance", datetodate);
+		datetodate.put("from", from);
+		datetodate.put("to", to);
+		return this.getSqlMapClientTemplate().delete(buildId(SQL_PREFIX,"deleteAttendance"), datetodate);
 	}
 
 	@Override
 	public Integer insert(Attendance attendance) {
-		return (Integer)this.getSqlMapClientTemplate().insert("addAttendance",attendance);
+		return (Integer)this.getSqlMapClientTemplate().insert(buildId(SQL_PREFIX,"insert"),attendance);
 	}
+	
+	/****************************************/
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Attendance> queryAttendance(String name, String code,
-			Date gmtWork, PageDto<Attendance> page) {
-		Map<String, Object>  attendance  =  new  HashMap<String, Object>();
-		attendance.put("name", name);
-		attendance.put("code", code);
-		attendance.put("gmtWork", gmtWork);
-		attendance.put("page", page);
+			Date from, Date to, PageDto<Attendance> page) {
+		Map<String, Object>  root  =  new  HashMap<String, Object>();
+		root.put("name", name);
+		root.put("code", code);
+		root.put("from", from);
+		root.put("to", to);
+		root.put("page", page);
 		
-		return this.getSqlMapClientTemplate().queryForList("getAllattendance",attendance);
+		return this.getSqlMapClientTemplate().queryForList(buildId(SQL_PREFIX,"queryAttendance"),root);
 	}
 
 	@Override
-	public Integer queryAttendanceCount(String name, String code, Date gmtWork) {
+	public Integer queryAttendanceCount(String name, String code, Date from, Date to) {
+		Map<String, Object>  root  =  new  HashMap<String, Object>();
+		root.put("name", name);
+		root.put("code", code);
+		root.put("from", from);
+		root.put("to", to);
 		
-		return (Integer)this.getSqlMapClientTemplate().queryForObject("getAttendanceCount", gmtWork);
+		return (Integer)this.getSqlMapClientTemplate().queryForObject(buildId(SQL_PREFIX,"queryAttendanceCount"), root);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -54,7 +64,7 @@ public class AttendanceDaoImpl extends BaseDao implements AttendanceDao {
 		 Map<String, Date>  fromdateto = new HashMap<String, Date>();
 		 fromdateto.put("from", from);
 		 fromdateto.put("to", to);
-		return this.getSqlMapClientTemplate().queryForList("getAttByDate", fromdateto);
+		return this.getSqlMapClientTemplate().queryForList(buildId(SQL_PREFIX,"getAttByDate"), fromdateto);
 	}
 
 	

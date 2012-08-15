@@ -129,4 +129,10 @@ public class StaffDaoImpl extends BaseDao implements StaffDao {
 	public List<Staff> queryStaffNameByDeptCode(String deptCode) {
 		return getSqlMapClientTemplate().queryForList(buildId(SQL_PREFIX, "queryStaffNameByDeptCode"), deptCode);
 	}
+
+	@Override
+	public String queryAccountByName(String name) {
+		
+		return (String) getSqlMapClientTemplate().queryForObject(buildId(SQL_PREFIX, "queryAccountByName"), name);
+	}
 }

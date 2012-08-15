@@ -16,10 +16,12 @@ import com.zz91.zzwork.desktop.dto.PageDto;
 public class AttendanceCountDaoImpl extends BaseDao implements
 		AttendanceCountDao {
      
+	final static String SQL_PREFIX="attendanceCount";
+	
 	@Override
 	public Integer insert(AttendanceCount attendanceCount) {
 	     
-		return (Integer)this.getSqlMapClientTemplate().insert("addAttendanceCount", attendanceCount);
+		return (Integer)this.getSqlMapClientTemplate().insert(buildId(SQL_PREFIX,"addAttendanceCount"), attendanceCount);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -30,7 +32,7 @@ public class AttendanceCountDaoImpl extends BaseDao implements
 		attendanceCount.put("name", name);
 		attendanceCount.put("gmtTargetMonth", gmtTargetMonth);
 		attendanceCount.put("page", page);
-		return this.getSqlMapClientTemplate().queryForList("selectAttendanceCount", attendanceCount);
+		return this.getSqlMapClientTemplate().queryForList(buildId(SQL_PREFIX,"selectAttendanceCount"), attendanceCount);
 	}
 
 	@Override
@@ -38,7 +40,7 @@ public class AttendanceCountDaoImpl extends BaseDao implements
 		Map<String, Object> resultCount = new HashMap<String, Object>();
 		resultCount.put("name", name);
 		resultCount.put("gmtTargetMonth", gmtTargetMonth);
-		return (Integer)this.getSqlMapClientTemplate().queryForObject("countByNameAndDate", resultCount);
+		return (Integer)this.getSqlMapClientTemplate().queryForObject(buildId(SQL_PREFIX,"countByNameAndDate"), resultCount);
 	}
 
 }

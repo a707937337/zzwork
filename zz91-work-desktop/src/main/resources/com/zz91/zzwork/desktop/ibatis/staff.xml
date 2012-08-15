@@ -244,4 +244,8 @@
 		dept_code like concat(#value#,'%')
 	</select>
 	
+	<select id="queryAccountByName" parameterClass="java.lang.String" resultClass="java.lang.String">
+	    select account from staff where name=#value# limit 1
+	</select>
+	
 </sqlMap>

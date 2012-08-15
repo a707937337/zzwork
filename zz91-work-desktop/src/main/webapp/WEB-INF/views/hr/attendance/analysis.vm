@@ -1,0 +1,86 @@
+<style >
+div {margin-top:10px;}
+</style>
+
+<script type="text/javascript">
+	function resetMonth (){
+		window.location.href=Context.ROOT+"/hr/attendance/analysis.htm?targetMonth="+Ext.get("targetMonth").dom.value;
+	}
+	
+	function submitForm(){
+		var dayArr=new Array();
+		var workfArr=new Array();
+		var worktArr=new Array();
+		
+		Ext.each(Ext.query(".chk"),function(item,idx,allItems){
+			if(item.checked){
+				dayArr.push(item.value);
+				workfArr.push(Ext.query("#workf-"+item.value)[0].value);
+				worktArr.push(Ext.query("#workt-"+item.value)[0].value);
+			}
+		});
+		
+		Ext.query("#dayArr")[0].value=dayArr.join(",");
+		Ext.query("#workfArr")[0].value=workfArr.join(",");
+		Ext.query("#worktArr")[0].value=worktArr.join(",");
+		
+		return true;
+	}
+</script>
+
+<div style="padding:20px;">
+	<div style="color:red;">选择统计月份的工作时间,默认选中为工作日时间</div>
+    <form action="#springUrl('/hr/attendance/doAnalysis.htm')" method="post" onsubmit="return submitForm();">  
+		
+		
+		
+		<input type="text" name="dayArr" id="dayArr" value="" />
+		<input type="text" name="workfArr" id="workfArr" value=""/>
+		<input type="text" name="worktArr" id="worktArr" value=""/>
+        
+		<div >
+            统计月份：<input name="targetMonth" id="targetMonth" value="$!{targetMonth}" onblur="resetMonth();"></input>
+        	<div style="color:red;">格式： yyyy-MM 例：2012-01</div>
+        </div>
+        
+        <div>
+			<table >
+                <tr>
+					<th> </th>
+					<th>日期</th>
+					<th>星期</th>
+					<th>上班时间</th>
+					<th>下班时间</th>
+				</tr>
+            #foreach($md in $!{monthDay})
+				<tr>
+					<td>
+						#if($!{md.dayOfWeek} == 1 || $!{md.dayOfWeek} == 7)
+							<input type="checkbox" name="chk" value="$!{md.dayOfMonth}" class="chk" />
+						#else
+							<input type="checkbox" name="chk"  value="$!{md.dayOfMonth}" class="chk" checked />
+						#end
+					</td>
+					<td>$!{md.dayOfMonth}</td>
+					<td>
+						#foreach($week in $!{weekName})
+							#if($velocityCount == $!{md.dayOfWeek})
+								$week
+							#end
+						#end
+					</td>
+                    <td><input type="text" value="$!{workf}" name="workf" id="workf-$!{md.dayOfMonth}"/></td>
+                    <td><input type="text" value="$!{workt}" name="workt" id="workt-$!{md.dayOfMonth}"/></td>
+				</tr>
+			#end
+			</table>
+				
+        </div>
+        
+        <div>
+        <input type="submit" value="确认所填信息无误，马上统计" style="width:200px;height:24px;" />
+        </div>
+    
+    </form>
+</div>
+	

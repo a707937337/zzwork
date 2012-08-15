@@ -14,10 +14,10 @@
 	    <result property="punch20" column="punch0"/>
 	    <result property="punch60" column="punch0"/>
 	    <result property="punch80" column="punch0"/>
-	    <result property="punch_count" column="punchCount"/>
-	    <result property="gmt_work" column="gmtWork"/>
-	    <result property="gmt_created" column="gmtCreated"/>
-	    <result property="gmt_modeified" column="gmtModeified"/>
+	    <result property="punchCount" column="punch_count"/>
+	    <result property="gmtWork" column="gmt_work"/>
+	    <result property="gmtCreated" column="gmt_created"/>
+	    <result property="gmtModeified" column="gmt_modeified"/>
 	   </resultMap>
 	   <sql id="filed">
 	   name,

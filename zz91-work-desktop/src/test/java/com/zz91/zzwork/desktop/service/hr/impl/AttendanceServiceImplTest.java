@@ -48,7 +48,7 @@ public class AttendanceServiceImplTest extends BaseServiceTestCase{
 		}
 		
 		PageDto<Attendance>  page  = new PageDto<Attendance>();
-		page = attendanceServiceImpl.pageAttendance(null,null, null, page);
+		page = attendanceServiceImpl.pageAttendance(null,null, null, null, page);
 		assertNotNull(page);
 		assertNotNull(page.getTotalRecords());
 		assertEquals(20, page.getTotalRecords().intValue());
@@ -56,7 +56,7 @@ public class AttendanceServiceImplTest extends BaseServiceTestCase{
 		//最后一页的测试
 		
 		page  = new PageDto<Attendance>();
-		page  =attendanceServiceImpl.pageAttendance(null,null, null, page);
+		page  =attendanceServiceImpl.pageAttendance(null,null, null, null, page);
 		assertNotNull(page);
 		assertNotNull(page.getTotalRecords());
 		assertEquals(7, page.getTotalRecords().intValue());
@@ -92,8 +92,6 @@ public class AttendanceServiceImplTest extends BaseServiceTestCase{
 			e.printStackTrace();
 			return 0;
 		}
-		
-		
 			
 	}
 	

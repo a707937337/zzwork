@@ -1,24 +1,27 @@
+<style >
+div {margin-top:10px;}
+</style>
 
-<script type="text/javascript" src="#springUrl('/app/hr/impt.js	')"></script>
 
-<script type="text/javascript" >
-	Ext.onReady(function(){
-		//com.zz91.zzwork.hr.ImptWin(function(){
-		//	window.location.href=Context.ROOT+"/index.htm";
-		//});
-		
-		var form=new com.zz91.zzwork.hr.ImptForm({
-			region:"center"
-		});
-		
-		
-		var viewport = new Ext.Viewport({
-			layout:"border",
-			items:[form]
-		});
+<div style="padding:20px;">
+	#if("error"==1)
+		<div style="colr:red" >日期填写不正确</div>
+	#end
+<form action="#springUrl('/hr/attendance/doImpt.htm')" enctype="multipart/form-data" method="post">
+
+<div >
+    开始时间：<input name="from" id="from" ></input>
+	结束时间：<input name="to" id="to" ></input>
+	<div style="color:red;">格式： 2012-01-01</div>
+</div>
+
+<div>
+	考勤数据：<input type="file" name="uploadfile" />
+</div>
+
+<div>
+<input type="submit" value="确认所填信息无误，并提交" style="width:200px;height:24px;" />
+</div>
+</form>
+</div>
 	
-		form.initFocus();
-		
-	});
-</script>
-$!{testkey}

@@ -12,8 +12,8 @@ public interface AttendanceDao {
  
 	public Integer insert(Attendance attendance);
 	public Integer deleteAttendance(Date from, Date to);
-	public List<Attendance> queryAttendance(String name, String code, Date gmtWork, PageDto<Attendance> page);
-	public Integer queryAttendanceCount(String name, String code, Date gmtWork);
+	public List<Attendance> queryAttendance(String name, String code, Date from, Date to, PageDto<Attendance> page);
+	public Integer queryAttendanceCount(String name, String code, Date from, Date to);
 	public List<Attendance> queryByGmtWork(Date from, Date to);
 }
  
