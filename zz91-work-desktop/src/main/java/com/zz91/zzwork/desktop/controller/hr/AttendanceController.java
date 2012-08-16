@@ -156,6 +156,6 @@ public class AttendanceController extends BaseController {
 		
 		attendanceService.analysis(targetMonthDate, list);
 		
-		return null;
+		return new ModelAndView("redirect:analysis.htm");
 	}
 }

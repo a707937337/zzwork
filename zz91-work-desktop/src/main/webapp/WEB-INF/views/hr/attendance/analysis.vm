@@ -32,11 +32,9 @@ div {margin-top:10px;}
 	<div style="color:red;">选择统计月份的工作时间,默认选中为工作日时间</div>
     <form action="#springUrl('/hr/attendance/doAnalysis.htm')" method="post" onsubmit="return submitForm();">  
 		
-		
-		
-		<input type="text" name="dayArr" id="dayArr" value="" />
-		<input type="text" name="workfArr" id="workfArr" value=""/>
-		<input type="text" name="worktArr" id="worktArr" value=""/>
+		<input type="hidden" name="dayArr" id="dayArr" value="" />
+		<input type="hidden" name="workfArr" id="workfArr" value=""/>
+		<input type="hidden" name="worktArr" id="worktArr" value=""/>
         
 		<div >
             统计月份：<input name="targetMonth" id="targetMonth" value="$!{targetMonth}" onblur="resetMonth();"></input>

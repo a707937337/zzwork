@@ -2,6 +2,7 @@ package com.zz91.zzwork.desktop.service.hr.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -19,10 +20,13 @@ import org.springframework.stereotype.Component;
 
 import com.zz91.util.datetime.DateUtil;
 import com.zz91.util.lang.StringUtils;
+import com.zz91.zzwork.desktop.dao.hr.AttendanceAnalysisDao;
 import com.zz91.zzwork.desktop.dao.hr.AttendanceDao;
 import com.zz91.zzwork.desktop.dao.staff.StaffDao;
 import com.zz91.zzwork.desktop.domain.hr.Attendance;
+import com.zz91.zzwork.desktop.domain.hr.AttendanceAnalysis;
 import com.zz91.zzwork.desktop.dto.PageDto;
+import com.zz91.zzwork.desktop.dto.hr.AttendanceDto;
 import com.zz91.zzwork.desktop.dto.hr.WorkDay;
 import com.zz91.zzwork.desktop.service.hr.AttendanceService;
 
@@ -33,6 +37,8 @@ public class AttendanceServiceImpl implements AttendanceService {
 	private AttendanceDao attendanceDao;
 	@Resource
 	private StaffDao staffDao;
+	@Resource
+	private AttendanceAnalysisDao attendanceAnalysisDao;
 
 	@Override
 	public Boolean impt(Date from, Date to, InputStream inputStream) {
@@ -98,12 +104,131 @@ public class AttendanceServiceImpl implements AttendanceService {
 		page.setTotalRecords(attendanceDao.queryAttendanceCount(name, code, from, to));
 		return page;
 	}
-
+	
+	
+	/**
+	 * <br />当月应出勤天数：统计选定工作日
+	 * <br />出勤天数：工作日内有打卡记录
+	 * <br />
+	 * <br />请假：无法判断，由HR填写，不在统计范围内
+	 * <br />其他天数：无法判断，由HR定义与填写，不在统计范围内
+	 * <br />
+	 * <br />未打卡：无上班/下班时间记录
+	 * <br />旷工：无记录=应出勤天数-出勤天数?  迟到30分钟以上算旷工半天
+	 * <br />迟到：上班时间>应上班时间
+	 * <br />早退：下班时间<应下班时间
+	 * <br />加班：下班时间>20:00
+	 * @param month
+	 * @param workDay
+	 */
 	@Override
 	public void analysis(Date month, List<WorkDay> workDay) {
-		//循环工作日，获取每天打卡数据
-		//计算相关数据值
+		
+		attendanceAnalysisDao.deleteByGmtTarget(month);
+		
+		Map<String, AttendanceAnalysis> result=new HashMap<String, AttendanceAnalysis>();
+		List<Attendance> list=null;
+		
+		//按天统计每天的数据
+		for(WorkDay wd:workDay){
+			//得到某工作日数据
+			 list = attendanceDao.queryAttendancesByWork(new Date(wd.getDay()), new Date(wd.getDay()+86400000));
+			
+			
+			Map<String, AttendanceDto> dayList=buildDayRecord(list, (wd.getWorkf()+wd.getWorkt())/2, wd.getDay());
+			
+			for(String code:dayList.keySet()){
+				AttendanceDto dto=dayList.get(code);
+				AttendanceAnalysis analysisResult=result.get(code);
+				if(analysisResult==null){
+					analysisResult = new AttendanceAnalysis();
+					analysisResult.setAccount(dto.getAccount());
+					analysisResult.setName(dto.getName());
+					analysisResult.setCode(code);
+					analysisResult.setDayFull(BigDecimal.valueOf(workDay.size()));
+					analysisResult.setDayUnwork(BigDecimal.valueOf(0));
+					
+					analysisResult.setDayActual(BigDecimal.valueOf(0));
+					analysisResult.setDayUnrecord(0);
+					analysisResult.setDayLate(0);
+					analysisResult.setDayEarly(0);
+					analysisResult.setDayOvertime(0);
+					
+					result.put(code, analysisResult); //?
+				}
+				
+				analysisResult.setDayActual(BigDecimal.valueOf(analysisResult.getDayActual().doubleValue()+1));
+				
+				if(dto.getWorkf()!=null){
+					if(dto.getWorkf()>wd.getWorkf()){
+						if(dto.getWorkf()>(wd.getWorkf()+30*60*1000)){
+							//旷工半天
+							analysisResult.setDayUnwork(BigDecimal.valueOf(analysisResult.getDayUnwork().doubleValue()+.5d));
+						}else{
+							analysisResult.setDayLate(analysisResult.getDayLate()+1);
+						}
+					}
+				}else{
+					analysisResult.setDayUnrecord(analysisResult.getDayUnrecord()+1);
+				}
+				
+				if(dto.getWorkt()!=null){
+					if(dto.getWorkt()<wd.getWorkt()){
+						analysisResult.setDayEarly(analysisResult.getDayEarly()+1);
+					}else{
+						if(dto.getWorkt()>(20*60*60*1000)){
+							analysisResult.setDayOvertime(analysisResult.getDayOvertime()+1);
+						}
+					}
+					
+				}else{
+					analysisResult.setDayUnrecord(analysisResult.getDayUnrecord()+1);
+				}
+			}
+			
+		}
+		
 		//保存统计结果
+		for(String code:result.keySet()){
+			AttendanceAnalysis analysisResult=result.get(code);
+			analysisResult.setGmtTarget(month);
+			attendanceAnalysisDao.insert(analysisResult);
+		}
+	}
+	
+	private Map<String, AttendanceDto> buildDayRecord(List<Attendance> list, Long half, Long monthDay){
+		Map<String, AttendanceDto> dtoMap=new HashMap<String, AttendanceDto>();
+		long wt=0;
+		for(Attendance attendance:list){
+			AttendanceDto dto=dtoMap.get(attendance.getCode());
+			if(dto==null){
+				dto=new AttendanceDto();
+				dto.setAccount(attendance.getAccount());
+				dto.setCode(attendance.getCode());
+				dto.setName(attendance.getName());
+				dtoMap.put(attendance.getCode(), dto);
+			}
+			wt=attendance.getGmtWork().getTime() - monthDay;
+			if(wt<=half){
+				if(dto.getWorkf()!=null){
+					if(wt<dto.getWorkf().longValue()){
+						dto.setWorkf(wt);
+					}
+				}else{
+					dto.setWorkf(wt);
+				}
+			}else{
+				if(dto.getWorkt()!=null){
+					if(wt>dto.getWorkt().longValue()){
+						dto.setWorkt(wt);
+					}
+				}else {
+					dto.setWorkt(wt);
+				}
+			}
+		}
+		list=null;
+		return dtoMap;
 	}
 
 	@Override

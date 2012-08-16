@@ -82,7 +82,7 @@ com.zz91.zzwork.hr.attendance.MainGrid=Ext.extend(Ext.grid.GridPanel,{
 							var B = _store.baseParams;
 							B = B||{};
 							if(field.getValue()!=""){
-								B["from"] = field.getValue()+" 00:00:00";
+								B["from"] = Ext.util.Format.date(field.getValue(), 'Y-m-d 00:00:00');
 							}else{
 								B["from"]=null;
 							}
@@ -100,7 +100,7 @@ com.zz91.zzwork.hr.attendance.MainGrid=Ext.extend(Ext.grid.GridPanel,{
 							var B = _store.baseParams;
 							B = B||{};
 							if(field.getValue()!=""){
-								B["to"] = field.getValue()+" 00:00:00";
+								B["to"] =  Ext.util.Format.date(field.getValue(), 'Y-m-d 00:00:00');
 							}else{
 								B["to"]=null;
 							}

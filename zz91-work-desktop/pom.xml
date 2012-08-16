@@ -108,6 +108,10 @@
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
 		</dependency>
+		<dependency>
+		  <groupId>jexcelapi</groupId>
+		  <artifactId>jxl</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>zz91-work-desktop</finalName>

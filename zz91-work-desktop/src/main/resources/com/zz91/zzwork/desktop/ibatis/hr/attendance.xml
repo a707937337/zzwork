@@ -60,10 +60,10 @@
 			<isNotEmpty prepend="and" property="code" >
 				code=#code#
 			</isNotEmpty>
-			<isNotEmpty prepend="and" property="gmtWorkFrom" >
+			<isNotEmpty prepend="and" property="from" >
 				gmt_work >= #from#
 			</isNotEmpty>
-			<isNotEmpty prepend="and" property="gmtWorkFrom" >
+			<isNotEmpty prepend="and" property="to" >
 				 #to# >=gmt_work
 			</isNotEmpty>
 		</dynamic>
@@ -81,6 +81,12 @@
         <include refid="dynamicQuery" />
         <include refid="common.pageOrderBy" />
         <include refid="common.pageLimit" />
+    </select>
+    <select id="queryAttendancesByWork" parameterClass="java.util.HashMap" resultMap="fullcolumnResult">
+		select 
+        <include refid="fullcolumn" />
+	     from attendance 
+        <include refid="dynamicQuery" />
     </select>
     
     <insert id="insert" parameterClass="attendance" >

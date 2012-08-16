@@ -44,7 +44,7 @@ public class AttendanceDaoImpl extends BaseDao implements AttendanceDao {
 		root.put("to", to);
 		root.put("page", page);
 		
-		return this.getSqlMapClientTemplate().queryForList(buildId(SQL_PREFIX,"queryAttendance"),root);
+		return getSqlMapClientTemplate().queryForList(buildId(SQL_PREFIX,"queryAttendance"),root);
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class AttendanceDaoImpl extends BaseDao implements AttendanceDao {
 		root.put("from", from);
 		root.put("to", to);
 		
-		return (Integer)this.getSqlMapClientTemplate().queryForObject(buildId(SQL_PREFIX,"queryAttendanceCount"), root);
+		return (Integer)getSqlMapClientTemplate().queryForObject(buildId(SQL_PREFIX,"queryAttendanceCount"), root);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -64,7 +64,16 @@ public class AttendanceDaoImpl extends BaseDao implements AttendanceDao {
 		 Map<String, Date>  fromdateto = new HashMap<String, Date>();
 		 fromdateto.put("from", from);
 		 fromdateto.put("to", to);
-		return this.getSqlMapClientTemplate().queryForList(buildId(SQL_PREFIX,"getAttByDate"), fromdateto);
+		return getSqlMapClientTemplate().queryForList(buildId(SQL_PREFIX,"getAttByDate"), fromdateto);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Attendance> queryAttendancesByWork(Date from, Date to) {
+		Map<String, Object>  root  =  new  HashMap<String, Object>();
+		root.put("from", from);
+		root.put("to", to);
+		return getSqlMapClientTemplate().queryForList(buildId(SQL_PREFIX, "queryAttendancesByWork"), root);
 	}
 
 	
