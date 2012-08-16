@@ -7,28 +7,31 @@ import java.util.Date;
  * @author root
  *
  */
+@SuppressWarnings("serial")
 public class AttendanceCount  implements Serializable {
 
 	/**
 	 * 员工出勤统计信息
 	 */
-	private static final long serialVersionUID = 1L;
+	private static long serialVersionUID = 1L;
 	private Integer id;
 	private String  name;
 	private String  code;
-	private String  account;
+	private String  account;//系统中的账号
 	private Integer punch0;
 	private Integer punch20;
 	private Integer punch60;
+	private Integer punch80;
 	private Integer punchCount;
-	private Date    gmtMonth;
+	private Date    gmtMonth;//统计的月份
+	private Date    gmtWork;//问题数据的具体时间
 	private Date    gmtCreated;
-	private Date    modeified;
+	private Date    gmtModeified;
 	public AttendanceCount() {
 		
 	}
     public AttendanceCount(Integer id,String name,String code,String account,Integer punch0,Integer punch20,
-    		Integer punch60,Integer punchCount,Date gmtMonth,Date gmtCreated,Date modeified) {
+    		Integer punch60,Integer punchCount,Date gmtMonth,Date gmtCreated,Date gmtModeified) {
     	this.id =id;
     	this.name= name;
     	this.code= code;
@@ -39,7 +42,7 @@ public class AttendanceCount  implements Serializable {
     	this.punchCount = punchCount;
     	this.gmtCreated = gmtCreated;
     	this.gmtMonth  = gmtMonth;
-    	this.modeified = modeified;
+    	this.gmtModeified = gmtModeified;
 		
 	}
 	public Integer getId() {
@@ -84,6 +87,15 @@ public class AttendanceCount  implements Serializable {
 	public void setPunch60(Integer punch60) {
 		this.punch60 = punch60;
 	}
+	public Integer getPunch80() {
+		return punch80;
+	}
+	public void setPunch80(Integer punch80) {
+		this.punch80 = punch80;
+	}
+	public static void setSerialversionuid(long serialversionuid) {
+		serialVersionUID = serialversionuid;
+	}
 	public Integer getPunchCount() {
 		return punchCount;
 	}
@@ -96,17 +108,23 @@ public class AttendanceCount  implements Serializable {
 	public void setGmtMonth(Date gmtMonth) {
 		this.gmtMonth = gmtMonth;
 	}
+	public Date getGmtWork() {
+		return gmtWork;
+	}
+	public void setGmtWork(Date gmtWork) {
+		this.gmtWork = gmtWork;
+	}
 	public Date getGmtCreated() {
 		return gmtCreated;
 	}
 	public void setGmtCreated(Date gmtCreated) {
 		this.gmtCreated = gmtCreated;
 	}
-	public Date getModeified() {
-		return modeified;
+	public Date getGmtModeified() {
+		return gmtModeified;
 	}
-	public void setModeified(Date modeified) {
-		this.modeified = modeified;
+	public void setGmtModeified(Date gmtModeified) {
+		this.gmtModeified = gmtModeified;
 	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;

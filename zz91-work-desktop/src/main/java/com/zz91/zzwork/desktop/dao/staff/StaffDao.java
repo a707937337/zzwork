@@ -38,4 +38,6 @@ public interface StaffDao {
 	public String queryNameByAccount(String account);
 	
 	public List<Staff> queryStaffNameByDeptCode(String deptCode);
+	
+	public String queryAccountByName(String name);
 }

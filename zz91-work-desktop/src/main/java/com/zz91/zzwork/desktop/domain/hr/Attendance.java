@@ -20,21 +20,21 @@ public class Attendance implements Serializable {
 	private String  account;
 	private Date    gmtWork;
 	private Date    gmtCreated;
-	private Date    modeified;
+	private Date    gmtModeified;
 	
 	public Attendance() {
 		
 		
 	}
 	public Attendance(Integer id ,String name,String code,String account,Date gmtWork,
-			Date gmtCreated,Date modeified){
+			Date gmtCreated,Date gmtModeified){
 		this.id = id;
 		this.name = name;
 		this.code =code;
 		this.account = account;
 		this.gmtWork = gmtWork;
 		this.gmtCreated =gmtCreated;
-		this.modeified = modeified;
+		this.gmtModeified = gmtModeified;
 		
 		
 	}
@@ -74,10 +74,10 @@ public class Attendance implements Serializable {
 	public void setGmtCreated(Date gmtCreated) {
 		this.gmtCreated = gmtCreated;
 	}
-	public Date getModeified() {
-		return modeified;
+	public Date getGmtModeified() {
+		return gmtModeified;
 	}
-	public void setModeified(Date modeified) {
-		this.modeified = modeified;
+	public void setGmtModeified(Date gmtModeified) {
+		this.gmtModeified = gmtModeified;
 	}
 }

@@ -23,4 +23,11 @@
 	<sqlMap resource="com/zz91/zzwork/desktop/ibatis/feedback.xml" />
 	<sqlMap resource="com/zz91/zzwork/desktop/ibatis/scheduler_event.xml" />
 	<sqlMap resource="com/zz91/zzwork/desktop/ibatis/scheduler_report.xml" />
+	
+	<!-- hr -->
+	<sqlMap resource="com/zz91/zzwork/desktop/ibatis/hr/attendance.xml" />
+	<sqlMap resource="com/zz91/zzwork/desktop/ibatis/hr/attendance_analysis.xml" />
+	<!-- 
+	<sqlMap resource="com/zz91/zzwork/desktop/ibatis/hr/attendanceCount.xml" />
+	 -->
 </sqlMapConfig>
