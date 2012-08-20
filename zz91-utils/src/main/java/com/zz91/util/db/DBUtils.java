@@ -9,12 +9,16 @@ import java.sql.Statement;
 
 import javax.sql.DataSource;
 
+import org.apache.log4j.Logger;
+
 
 import com.mysql.jdbc.StringUtils;
-import com.zz91.util.LoggerUtils;
+//import com.zz91.util.LoggerUtils;
 import com.zz91.util.db.pool.DBPoolFactory;
 
 public class DBUtils {
+	
+	final static Logger LOG=Logger.getLogger(DBUtils.class);
 
 	/**
 	 * 根据sql语句获取数据条数，传递的sql语句必须是"select count(*)..."格式
@@ -84,24 +88,19 @@ public class DBUtils {
 		ResultSet rset = null;
 		boolean success = true;
 		if (StringUtils.isEmptyOrWhitespaceOnly(query)) {
-			LoggerUtils.error(DBUtils.class, "执行的SQL语句为空。");
+			LOG.error("DBUtil ERROR:Empty SQL!");
 			return false;
 		}
 		try {
 			con = DBUtils.getConnection(dbName);
 			stmt = con.prepareStatement(query);
-			LoggerUtils.debug(DBUtils.class, "执行的SQL语句:" + query);
+			LOG.debug("SQL Query:" + query);
 			if (reader instanceof IParamReadDataHandler)
 				((IParamReadDataHandler) reader).setParams(stmt);
 			rset = stmt.executeQuery();
 			reader.handleRead(rset);
 		} catch (Exception e) {
-			if (errMsg == null)
-				LoggerUtils.error(DBUtils.class,
-						"Error executing select query statement :" + query
-								+ "\n" + e);
-			else
-				LoggerUtils.error(DBUtils.class, errMsg);
+			e.printStackTrace();
 			success = false;
 		} finally {
 			closeConnResStat(con, rset, stmt);
@@ -129,7 +128,7 @@ public class DBUtils {
 		PreparedStatement stmt = null;
 		boolean success = true;
 		if (StringUtils.isEmptyOrWhitespaceOnly(query)) {
-			LoggerUtils.error(DBUtils.class, "执行的SQL语句为空。");
+			LOG.error("DBUtil ERROR:Empty SQL!");
 			return false;
 		}
 		try {
@@ -141,11 +140,7 @@ public class DBUtils {
 				stmt.executeUpdate();
 			DBUtils.commit(con);
 		} catch (Exception e) {
-			if (errMsg == null)
-				LoggerUtils.error(DBUtils.class, "Failed to execute IU query "
-						+ e);
-			else
-				LoggerUtils.error(DBUtils.class, "errMsg " + e);
+			e.printStackTrace();
 			success = false;
 		} finally {
 			closeConnResStat(con, null, stmt);
@@ -180,7 +175,7 @@ public class DBUtils {
 		ResultSet rset = null;
 		boolean success = true;
 		if (StringUtils.isEmptyOrWhitespaceOnly(query)) {
-			LoggerUtils.error(DBUtils.class, "执行的SQL语句为空。");
+			LOG.error("DBUtil ERROR:Empty SQL!");
 			return false;
 		}
 		try {
@@ -190,12 +185,7 @@ public class DBUtils {
 			rset = stmt.executeQuery();
 			reader.handleRead(rset);
 		} catch (Exception e) {
-			if (errMsg == null)
-				LoggerUtils.error(DBUtils.class,
-						"Error executing select query statement :" + query
-								+ "\n" + e);
-			else
-				LoggerUtils.error(DBUtils.class, errMsg);
+			e.printStackTrace();
 			success = false;
 		} finally {
 			closeResStat(rset, stmt);
@@ -222,7 +212,7 @@ public class DBUtils {
 		PreparedStatement stmt = null;
 		boolean success = true;
 		if (StringUtils.isEmptyOrWhitespaceOnly(query)) {
-			LoggerUtils.error(DBUtils.class, "执行的SQL语句为空。");
+			LOG.error("DBUtil ERROR:Empty SQL!");
 			return false;
 		}
 		try {
@@ -233,11 +223,7 @@ public class DBUtils {
 				stmt.executeUpdate();
 			commit(con);
 		} catch (Exception e) {
-			if (errMsg == null)
-				LoggerUtils.error(DBUtils.class, "Failed to execute IU query "
-						+ e);
-			else
-				LoggerUtils.error(DBUtils.class, "errMsg " + e);
+			e.printStackTrace();
 			success = false;
 		} finally {
 			closeStatement(stmt);
@@ -471,6 +457,7 @@ public class DBUtils {
 		closeConnection(con);
 	}
 
+	@Deprecated
 	public static void clearTableData(Connection con, String tableName) {
 		String sql = "delete from " + tableName + " where 1=1 ";
 		insertUpdate(con, sql);
