@@ -51,7 +51,7 @@ public class EpAuthUtils extends SessionUtils{
 	 * @throws UnsupportedEncodingException 
 	 */
 	public EpAuthUser validateUser(HttpServletResponse response,
-			String account, String password, Integer expired,String ip) throws IOException, AuthorizeException, NoSuchAlgorithmException{
+			String account, String password, String ip) throws IOException, AuthorizeException, NoSuchAlgorithmException{
 		String encodePwd="";
 		try {
 			encodePwd = MD5.encode(password);
@@ -61,10 +61,10 @@ public class EpAuthUtils extends SessionUtils{
 			e.printStackTrace();
 		}
 		
-		return validateUserByEncodePwd(response, account, encodePwd, expired, ip);
+		return validateUserByEncodePwd(response, account, encodePwd, ip);
 	}
 	public EpAuthUser validateUserByEncodePwd(HttpServletResponse response,
-			String account, String password, Integer expired,String ip) throws IOException, AuthorizeException, NoSuchAlgorithmException {
+			String account, String password,String ip) throws IOException, AuthorizeException, NoSuchAlgorithmException {
 		EpAuthUser epAuthUser =null;
 		String encodeAccount = URLEncoder.encode(account, "utf-8");
 		String result = HttpUtils.getInstance().httpGet(URLPREFIX+"/epAuthUser.htm?a="+encodeAccount+"&p="+password+"&ip="+ip+"&project="+EpAuthConst.PROJECT,HttpUtils.CHARSET_UTF8);
