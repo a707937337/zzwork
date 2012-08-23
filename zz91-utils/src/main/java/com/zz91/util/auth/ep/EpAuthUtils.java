@@ -81,7 +81,7 @@ public class EpAuthUtils extends SessionUtils{
 			throw new AuthorizeException(AuthorizeException.ERROR_SERVER);
 		}
 		
-		String validateTicket=MD5.encode(account+password+key);
+		String validateTicket=MD5.encode(account+password+EpAuthConst.PROJECT+key);
 		if(!ticket.equals(validateTicket)){
 			throw new AuthorizeException(AuthorizeException.ERROR_SERVER);
 		}
