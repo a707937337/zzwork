@@ -52,7 +52,7 @@ public class EpAuthUtils extends SessionUtils{
 	 */
 	public EpAuthUser validateUser(HttpServletResponse response,
 			String account, String password, String ip) throws IOException, AuthorizeException, NoSuchAlgorithmException{
-		String encodePwd="";
+		String encodePwd=null;
 		try {
 			encodePwd = MD5.encode(password);
 		} catch (NoSuchAlgorithmException e) {
@@ -109,14 +109,14 @@ public class EpAuthUtils extends SessionUtils{
 		String ticket = HttpUtils.getInstance().getCookie(request, EpAuthConst.TICKET_KEY, EpAuthConst.EP_DOMAIN);
 		String result = null;
 		try {
-			result = HttpUtils.getInstance().httpGet(URLPREFIX + "/epAuthTicket.htm?t=" + ticket+"&project="+EpAuthConst.PROJECT, HttpUtils.CHARSET_UTF8);
+			result = HttpUtils.getInstance().httpGet(URLPREFIX + "/validationTicket.htm?t=" + ticket+"&project="+EpAuthConst.PROJECT, HttpUtils.CHARSET_UTF8);
 		} catch (HttpException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
-		if(result==null){
+		if(result==null||"".equals(result)){
 			return null;
 		}
 		JSONObject resultJson = JSONObject.fromObject(result);
@@ -169,7 +169,7 @@ public class EpAuthUtils extends SessionUtils{
 		
 		EpAuthUser sessionUser = getEpAuthUser(request, sessionid);
 		String[] rightArr=sessionUser.getRightList();
-		if(rightArr==null){
+		if(rightArr==null||"".equals(rightArr)){
 			return false;
 		}
 		
@@ -190,7 +190,7 @@ public class EpAuthUtils extends SessionUtils{
 			return null;
 		}
 		EpAuthUser epAuthUser = null;
-		if (sessionid == null) {
+		if (sessionid == null||"".equals(sessionid)) {
 			// TODO 使用session实现
 			epAuthUser = (EpAuthUser) request.getSession().getAttribute(
 					EpAuthUser.SESSION_KEY);
@@ -202,7 +202,7 @@ public class EpAuthUtils extends SessionUtils{
 
 	public void setEpAuthUser(HttpServletRequest request, EpAuthUser epAuthUser,
 			String sessionid) {
-		if (sessionid == null) {
+		if (sessionid == null||"".equals(sessionid)) {
 			// TODO 使用session实现
 			request.getSession().setAttribute(EpAuthUser.SESSION_KEY, epAuthUser);
 		} else {
@@ -211,7 +211,7 @@ public class EpAuthUtils extends SessionUtils{
 	}
 
 	public void clearnEpAuthUser(HttpServletRequest request, String sessionid) {
-		if (sessionid == null) {
+		if (sessionid == null||"".equals(sessionid)) {
 			// TODO 使用session实现
 			request.getSession().removeAttribute(EpAuthUser.SESSION_KEY);
 		} else {
