@@ -68,6 +68,9 @@ public class EpAuthUtils extends SessionUtils{
 		EpAuthUser epAuthUser =null;
 		String encodeAccount = URLEncoder.encode(account, "utf-8");
 		String result = HttpUtils.getInstance().httpGet(URLPREFIX+"/validationUser.htm?a="+encodeAccount+"&p="+password+"&ip="+ip+"&project="+EpAuthConst.PROJECT,HttpUtils.CHARSET_UTF8);
+		if(result==null||"".equals(result)){
+			throw new AuthorizeException(AuthorizeException.ERROR_SERVER);
+		}
 		JSONObject resultJson = JSONObject.fromObject(result);
 		if(resultJson.containsKey("error") && !StringUtils.isEmpty(resultJson.getString("error"))){
 			throw new AuthorizeException(resultJson.getString("error"));
