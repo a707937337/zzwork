@@ -82,10 +82,10 @@ public class LogUtil {
 	 * @param value
 	 * @return	{"$regex":"value"}
 	 */
-	public String mgLike(String value){
+	public JSONObject mgLike(String value){
 		JSONObject data=new JSONObject();
 		data.put("$regex", value);
-		return data.toString();
+		return data;
 	}
 	/**
 	 * 逻辑运算符查询
@@ -93,10 +93,10 @@ public class LogUtil {
 	 * @param value
 	 * @return {"$gte":value}
 	 */
-	public String mgCompare(String type,Object value){
+	public JSONObject mgCompare(String type,Object value){
 		JSONObject data=new JSONObject();
 		data.put(compares.get(type).toString(), value);
-		return data.toString();
+		return data;
 	}
 
 	/**
@@ -105,12 +105,12 @@ public class LogUtil {
 	 * @return	{"column":1,"column":1}
 	 * column后面可跟参数1,0.若1是指查询该列,若0是指排除该列
 	 */
-	public String mgColumns(String... column){
+	public JSONObject mgColumns(String... column){
 		JSONObject columns=new JSONObject();
 		for(String cl:column){
 			columns.put(cl, 1);
 		}
-		return columns.toString();
+		return columns;
 	}
 	
 	/**
@@ -137,20 +137,46 @@ public class LogUtil {
 	 * @return {"key":value}
 	 * 
 	 */
-	public String mgkv(String key,Object value){
+	public JSONObject mgkv(String key,Object value){
 		JSONObject jb=new JSONObject();
 		jb.put(key, value);
-		return jb.toString();
+		return jb;
 	}
 	/**
 	 * in条件查询
 	 * @param obj
 	 * @return {"$in":[obj,obj,obj,obj]}
 	 */
-	public String mgIn(Object... obj){
+	public JSONObject mgIn(Object... obj){
 		JSONObject jb=new JSONObject();
 		jb.put("$in", obj);
-		return jb.toString();
+		return jb;
+	}
+	
+	public void mongo(String operator, String operation, String ip, String data){
+		NameValuePair[] param=new NameValuePair[]{
+				new NameValuePair("appCode", APP_CODE),
+				new NameValuePair("operator", operator),
+				new NameValuePair("operation", operation),
+				new NameValuePair("ip", ip),
+				new NameValuePair("time", String.valueOf(System.currentTimeMillis())),
+				new NameValuePair("data", data)
+				};
+		
+		try {
+			HttpUtils.getInstance().httpPost(HOST+"/mongo", param, HttpUtils.CHARSET_UTF8);
+		} catch (HttpException e) {
+		} catch (IOException e) {
+		}
+		
+	}
+	
+	public void mongo(String operator, String operation, String ip){
+		mongo(operator, operation, ip, null);
+	}
+	
+	public void mongo(String operator, String operation){
+		mongo(operator, operation, null, null);
 	}
 	
 	public void log(String operator, String operation, String ip, String data){
@@ -164,7 +190,7 @@ public class LogUtil {
 				};
 		
 		try {
-			HttpUtils.getInstance().httpPost(HOST, param, HttpUtils.CHARSET_UTF8);
+			HttpUtils.getInstance().httpPost(HOST+"/log", param, HttpUtils.CHARSET_UTF8);
 		} catch (HttpException e) {
 		} catch (IOException e) {
 		}
@@ -179,39 +205,56 @@ public class LogUtil {
 		log(operator, operation, null, null);
 	}
 	
+	/**
+	 * @param param
+	 * @param start
+	 * @param limit
+	 * @return 返回PageDto一样属性的JSONObject,其中集合为records(JSONArray)
+	 * totals;  		//总数据数
+	 * start;  		//页首
+	 * sort;  			//排序字段
+	 * dir; 			//desc or asc
+	 * limit;  			//分页大小
+	 * records;// 记录集
+	 **/
+	public JSONObject readMongo(Map<String, Object> param, Integer start, Integer limit){
+		try {
+			NameValuePair[] params=new NameValuePair[]{
+					new NameValuePair("params",JSONObject.fromObject(param).toString()),
+					new NameValuePair("start", start.toString()),
+					new NameValuePair("limit", limit.toString())
+			};
+			String resText = HttpUtils.getInstance().httpPost(HOST+"/logRead", params, HttpUtils.CHARSET_UTF8);
+			return JSONObject.fromObject(resText);
+		} catch (Exception e) {
+			
+		}
+		return null;
+	}
+	
 	public static void main(String[] args) {
 		long startTime = System.currentTimeMillis();
 		LogUtil logutil=new LogUtil();
 		
 		//select test
-		LogUtil.HOST="http://127.0.0.1:580/zz91-log/logRead";
+		LogUtil.HOST="http://127.0.0.1:580/zz91-log";
 		//param
-		JSONObject param=new JSONObject();
-		param.put("operator", logutil.mgLike("caozuorenyuan"));	//模糊查询
-		param.put("appCode", "log");
-		param.put("time",logutil.mgCompare(">=", "1345789546867"));	//逻辑运算符查询
-		param.put("columns", logutil.mgColumns("appCode","time"));		//要查询的列,可不指定
+		Map<String, Object> param=new HashMap<String, Object>();
+		param.put("operator", logutil.mgLike("zhangsan"));	//模糊查询
+		param.put("appCode", "esite");
+		param.put("time",logutil.mgCompare(">=","1345789546867"));	//逻辑运算符查询
+		//param.put("columns", logutil.mgColumns("appCode","time"));		//要查询的列,可不指定
 		//param.put("sort", "time");							//排序字段
 		//param.put("dir", "desc");							//排序 asc,desc
-		param.put("start", "0");							
-		param.put("limit", "10");
 		
-		param.put("data.age", logutil.mgIn(18,22,33,21));	//in查询
-		//param.put("or",logutil.mgArray(logutil.mgkv("age",21),
-		//				logutil.mgkv("data.mimi.ai", "htt")));	//逻辑or查询,
-		
-		NameValuePair[] params=new NameValuePair[]{
-				new NameValuePair("params",param.toString())
-		};
-		
-		
-		
-		
+		//param.put("data.age", logutil.mgIn(18,22,33,21));	//in查询
+		param.put("or",new JSONObject[]{logutil.mgkv("appCode","news"),
+				logutil.mgkv("appCode", "esite")});	//逻辑or查询,
 		
 		//result		
 		try {
-			String resText = HttpUtils.getInstance().httpPost(HOST, params, HttpUtils.CHARSET_UTF8);
-			JSONObject res=JSONObject.fromObject(resText);
+			
+			JSONObject res=logutil.readMongo(param, 0, 10);
 			List<JSONObject> list =res.getJSONArray("records"); 
 			for(int i=0;i<list.size();i++){
 				JSONObject j = (JSONObject)JSONSerializer.toJSON(list.get(i));
@@ -219,10 +262,6 @@ public class LogUtil {
 			}
 			long endTime = System.currentTimeMillis();
 			System.out.println("时间:"+(endTime-startTime));
-		} catch (HttpException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (Exception e){
 			e.printStackTrace();
 		}
