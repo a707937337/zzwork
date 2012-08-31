@@ -96,6 +96,14 @@ public class EpAuthUtils extends SessionUtils{
 		if(epAuthUser==null){
 			throw new AuthorizeException(AuthorizeException.ERROR_SERVER);
 		}
+		String rightList [] = null;
+		if(!resultJson.getString("rightList").equals("null")){
+			rightList = ((String [])resultJson.getJSONArray("rightList").toArray());
+		}
+		if(rightList==null||"".equals(rightList)){
+			throw new AuthorizeException(AuthorizeException.ERROR_SERVER);
+		}
+		epAuthUser.setRightList(rightList);
 		HttpUtils.getInstance().setCookie(response, EpAuthConst.TICKET_KEY,ticket, EpAuthConst.EP_DOMAIN, null);
 
 		return epAuthUser;
@@ -146,7 +154,10 @@ public class EpAuthUtils extends SessionUtils{
 		if(!resultJson.getString("epAuthUser").equals("null")){
 			epAuthUser = (EpAuthUser) JSONObject.toBean(resultJson.getJSONObject("epAuthUser"), EpAuthUser.class);
 		}
-	
+		
+		if(!resultJson.getString("rightList").equals("null")||!resultJson.getString("rightList").equals("")){
+			epAuthUser.setRightList((String [])resultJson.getJSONArray("rightList").toArray());
+		}
 		return epAuthUser;
 	}
 	public void logout(HttpServletRequest request,
@@ -240,4 +251,21 @@ public class EpAuthUtils extends SessionUtils{
 	public Integer getSessionAge() {
 		return 69*60;
 	}
+//	
+//	public static void main(String[] args) {
+//		EpAuthUser e = new EpAuthUser();
+//		e.setRightList(new String []{} );
+//		Map<String, Object> map = new HashMap<String, Object>();
+//		map.put("a", "a");
+//		String [] b = {"1","3","5"};
+//		map.put("b", b);
+//		JSONObject json = JSONObject.fromObject(map);
+//		String a [] ={};
+//     a = (String[])json.getJSONArray("b").toArray(a);
+//	 //JSONArray.toArray(json);
+//	 //System.out.println(d);
+////	  Arrays.fill(c,a);
+//	  System.out.println(c[0]);
+//		
+//	}
 }
