@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.NoSuchAlgorithmException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONObject;
@@ -98,7 +99,8 @@ public class EpAuthUtils extends SessionUtils{
 		}
 		String rightList [] = null;
 		if(!resultJson.getString("rightList").equals("null")){
-			rightList = ((String [])resultJson.getJSONArray("rightList").toArray());
+			rightList = new String [resultJson.getJSONArray("rightList").size()];
+			rightList = ((String [])resultJson.getJSONArray("rightList").toArray(rightList));
 		}
 		if(rightList==null||"".equals(rightList)){
 			throw new AuthorizeException(AuthorizeException.ERROR_SERVER);
@@ -156,7 +158,9 @@ public class EpAuthUtils extends SessionUtils{
 		}
 		
 		if(!resultJson.getString("rightList").equals("null")||!resultJson.getString("rightList").equals("")){
-			epAuthUser.setRightList((String [])resultJson.getJSONArray("rightList").toArray());
+			String [] rightList = new String [resultJson.getJSONArray("rightList").size()];
+			rightList = (String [])resultJson.getJSONArray("rightList").toArray(rightList);
+			epAuthUser.setRightList(rightList);
 		}
 		return epAuthUser;
 	}
@@ -260,12 +264,13 @@ public class EpAuthUtils extends SessionUtils{
 //		String [] b = {"1","3","5"};
 //		map.put("b", b);
 //		JSONObject json = JSONObject.fromObject(map);
-//		String a [] ={};
+//		String a [] =new String [json.getJSONArray("b").size()];
 //     a = (String[])json.getJSONArray("b").toArray(a);
+//     System.out.println(json.getJSONArray("b").size());
 //	 //JSONArray.toArray(json);
 //	 //System.out.println(d);
 ////	  Arrays.fill(c,a);
-//	  System.out.println(c[0]);
+//	  System.out.println(a[0]);
 //		
 //	}
 }
