@@ -10,7 +10,7 @@
 	<groupId>com.zz91</groupId>
 	<artifactId>zz91-utils</artifactId>
 	<packaging>jar</packaging>
-	<version>1.7.7-SNAPSHOT</version>
+	<version>1.7.5-SNAPSHOT</version>
 	<name>zz91 develop utils</name>
 	<dependencies>
 		<dependency>

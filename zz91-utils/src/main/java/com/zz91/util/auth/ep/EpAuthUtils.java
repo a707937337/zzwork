@@ -145,7 +145,7 @@ public class EpAuthUtils extends SessionUtils{
 		}
 		String velidateTicket=null;
 		try {
-			velidateTicket = MD5.encode(key+ticket);
+			velidateTicket = MD5.encode(key+EpAuthConst.PROJECT+ticket);
 		} catch (NoSuchAlgorithmException e) {
 		} catch (UnsupportedEncodingException e) {
 		}
