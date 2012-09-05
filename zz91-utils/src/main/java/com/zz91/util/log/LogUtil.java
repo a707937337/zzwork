@@ -1,6 +1,8 @@
 package com.zz91.util.log;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,6 +98,18 @@ public class LogUtil {
 	public JSONObject mgCompare(String type,Object value){
 		JSONObject data=new JSONObject();
 		data.put(compares.get(type).toString(), value);
+		return data;
+	}
+	/**
+	 * 逻辑运算符查询(范围)
+	 * @param type	<,<=,>,>=,!=
+	 * @param value
+	 * @return {"$gte":value}
+	 */
+	public JSONObject mgCompare(String staType,Object staValue,String endType,Object endValue){
+		JSONObject data=new JSONObject();
+		data.put(compares.get(staType).toString(), staValue);
+		data.put(compares.get(endType).toString(), endValue);
 		return data;
 	}
 
@@ -237,22 +251,22 @@ public class LogUtil {
 		LogUtil logutil=new LogUtil();
 		
 		//select test
-		LogUtil.HOST="http://127.0.0.1:580/zz91-log";
+		//LogUtil.HOST="apps.zz91.com/zz91-log/zz91-log";
+		LogUtil.HOST="http://localhost:580/zz91-log";
 		//param
 		Map<String, Object> param=new HashMap<String, Object>();
-		param.put("operator", logutil.mgLike("zhangsan"));	//模糊查询
-		param.put("appCode", "esite");
-		param.put("time",logutil.mgCompare(">=","1345789546867"));	//逻辑运算符查询
+		//param.put("operator", logutil.mgLike("zhangsan"));	//模糊查询
+		//param.put("appCode", "esite");
+		param.put("time",logutil.mgCompare(">=","1346122272998","<=","1346122272998"));	//逻辑运算符查询
 		//param.put("columns", logutil.mgColumns("appCode","time"));		//要查询的列,可不指定
 		//param.put("sort", "time");							//排序字段
 		//param.put("dir", "desc");							//排序 asc,desc
-		
 		//param.put("data.age", logutil.mgIn(18,22,33,21));	//in查询
-		param.put("or",new JSONObject[]{logutil.mgkv("appCode","news"),
-				logutil.mgkv("appCode", "esite")});	//逻辑or查询,
-		
+		//param.put("or",new JSONObject[]{logutil.mgkv("appCode","news"),
+		//		logutil.mgkv("appCode", "esite")});	//逻辑or查询,
 		//result		
 		try {
+			//logutil.mongo("erwer", "sdfsdf");
 			
 			JSONObject res=logutil.readMongo(param, 0, 10);
 			List<JSONObject> list =res.getJSONArray("records"); 
@@ -262,6 +276,7 @@ public class LogUtil {
 			}
 			long endTime = System.currentTimeMillis();
 			System.out.println("时间:"+(endTime-startTime));
+			System.out.println(res.get("totals"));
 		} catch (Exception e){
 			e.printStackTrace();
 		}
