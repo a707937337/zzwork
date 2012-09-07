@@ -11,7 +11,7 @@ import com.zz91.zzwork.desktop.dto.hr.WorkDay;
 
 public interface AttendanceService {
  
-	public Boolean impt(Date from, Date to ,InputStream inputStream);
+	public Boolean impt(Date from, Date to ,InputStream inputStream, String dateFormat);
 	
 	public PageDto<Attendance> pageAttendance(String name, String code, Date from, Date to, PageDto<Attendance> page );
 	

@@ -50,7 +50,7 @@ public class AttendanceController extends BaseController {
 
 	final static String DATE_FORMAT="yyyy-MM-dd";
 	@RequestMapping
-	public ModelAndView doImpt(HttpServletRequest request, Map<String, Object> out,String from, String to) {
+	public ModelAndView doImpt(HttpServletRequest request, Map<String, Object> out,String from, String to, String dateFormat) {
 		
 		int error=0;
 		do {
@@ -78,7 +78,7 @@ public class AttendanceController extends BaseController {
 			if(file.getOriginalFilename()!=null &&
 					!file.getOriginalFilename().equals("")){
 				try {
-					attendanceService.impt(fromDate, toDate, file.getInputStream());
+					attendanceService.impt(fromDate, toDate, file.getInputStream(), dateFormat);
 				} catch (IOException e) {
 				}
 			}
@@ -143,6 +143,8 @@ public class AttendanceController extends BaseController {
 	@RequestMapping
 	public ModelAndView doAnalysis(HttpServletRequest request, Map<String, Object> out,
 			String targetMonth, String dayArr, String workfArr, String worktArr){
+		
+		
 		
 		Date targetMonthDate=null;
 		try {

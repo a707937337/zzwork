@@ -41,8 +41,12 @@ public class AttendanceServiceImpl implements AttendanceService {
 	private AttendanceAnalysisDao attendanceAnalysisDao;
 
 	@Override
-	public Boolean impt(Date from, Date to, InputStream inputStream) {
-
+	public Boolean impt(Date from, Date to, InputStream inputStream, String dateFormat) {
+		
+		if(StringUtils.isEmpty(dateFormat)){
+			dateFormat="yyyy-MM";
+		}
+		
 		//清理老数据
 		attendanceDao.deleteAttendance(from, to);
 		
@@ -73,8 +77,9 @@ public class AttendanceServiceImpl implements AttendanceService {
 				String gmtwork=row.getCell(2).getRichStringCellValue().toString();
 				if(!StringUtils.isEmpty(gmtwork)){
 					try {
-						att.setGmtWork(DateUtil.getDate(gmtwork, "yyyy-M-d HH:mm"));
+						att.setGmtWork(DateUtil.getDate(gmtwork, dateFormat));
 					} catch (ParseException e) {
+						e.printStackTrace();
 					}
 				}
 				

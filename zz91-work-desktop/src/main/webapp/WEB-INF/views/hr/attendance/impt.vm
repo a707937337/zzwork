@@ -16,6 +16,13 @@ div {margin-top:10px;}
 </div>
 
 <div>
+	考勤日期格式：
+	<input type="radio" name="dateFormat" value="yyyy-MM-dd HH:mm" checked />2012-01-01 01:01
+	<input type="radio" name="dateFormat" value="yyyy-MM-dd HH:mm:ss" />2012-01-01 01:01:01
+	
+	</div>
+
+<div>
 	考勤数据：<input type="file" name="uploadfile" />
 </div>
 

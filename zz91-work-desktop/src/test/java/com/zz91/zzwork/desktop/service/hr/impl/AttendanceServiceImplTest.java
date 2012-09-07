@@ -32,7 +32,7 @@ public class AttendanceServiceImplTest extends BaseServiceTestCase{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		 boolean b  = attendanceServiceImpl.impt(new Date(), new Date(), inputStream);
+		 boolean b  = attendanceServiceImpl.impt(new Date(), new Date(), inputStream, null);
 		 assertNotNull(b);
 		 assertTrue(b);
 
