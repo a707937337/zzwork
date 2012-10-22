@@ -284,6 +284,30 @@ public class TagsUtils {
 		return map;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public Map<String, String> queryTagsByHot(Integer size,Integer day){
+		Map<String, String> map=new HashMap<String, String>();
+		String responseText="";
+		String url="";
+		try {
+			url=API_HOST+"/queryTagsByHot.htm?l="+size+"&d="+day;
+			responseText = HttpUtils.getInstance().httpGet(url, HttpUtils.CHARSET_UTF8);
+			if(responseText.startsWith("{")){
+				JSONObject job=JSONObject.fromObject(responseText);
+				Set<String> jobset=job.keySet();
+				for(String k:jobset){
+					map.put(k, job.getString(k));
+				}
+			}
+		} catch (HttpException e) {
+			LOG.error("error connect tags server. url:"+url+" Exception:"+e.getMessage());
+		} catch (IOException e) {
+			LOG.error("error connect tags server. url:"+url+" Exception:"+e.getMessage());
+		}
+		
+		return map;
+	}
+	
 	public static void main(String[] args) throws UnsupportedEncodingException {
 //		TagsUtils.API_HOST="http://china.zz91.com/tags/api";
 		TagsUtils.getInstance().createTags("北京28");
