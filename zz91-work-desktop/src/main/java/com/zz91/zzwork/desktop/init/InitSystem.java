@@ -31,7 +31,7 @@ public class InitSystem {
 	}
 	
 	public void shutdown(){
-		
+		MemcachedUtils.getInstance().shutdownClient();
 	}
 
 }

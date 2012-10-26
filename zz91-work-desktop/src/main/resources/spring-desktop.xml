@@ -91,7 +91,7 @@
 		<property name="toolboxConfigLocation" value="WEB-INF/vm-toolbox.xml" />
 	</bean>
 	
-	<bean id="initSystem" class="com.zz91.zzwork.desktop.init.InitSystem" init-method="startup" destroy-method="shutdown()">
+	<bean id="initSystem" class="com.zz91.zzwork.desktop.init.InitSystem" init-method="startup" destroy-method="shutdown">
 	</bean>
 	
 	<bean id="authConst" class="com.zz91.util.auth.AuthConst" init-method="startup">
