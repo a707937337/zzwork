@@ -1,8 +1,6 @@
 package com.zz91.util.log;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -246,6 +244,7 @@ public class LogUtil {
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		long startTime = System.currentTimeMillis();
 		LogUtil logutil=new LogUtil();

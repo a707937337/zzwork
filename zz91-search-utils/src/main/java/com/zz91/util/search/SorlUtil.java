@@ -12,13 +12,10 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
+import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.BinaryRequestWriter;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
-
-import com.zz91.util.lang.StringUtils;
-import com.zz91.util.seo.SeoUtil;
 
 /**
  * 请使用 SolrUtil 提供的方法
@@ -29,7 +26,7 @@ import com.zz91.util.seo.SeoUtil;
 @Deprecated
 public class SorlUtil {
 	
-	private static Logger LOG = Logger.getLogger(SeoUtil.class);
+	private static Logger LOG = Logger.getLogger(SorlUtil.class);
 	
 	private String DEFAULT_PROP = "search.properties";
 	
@@ -121,7 +118,7 @@ public class SorlUtil {
 			boolean hight, String[] highlightField, int start, int limit){
 		SolrQuery query = new SolrQuery();
         //主查询
-		if (StringUtils.isNotEmpty(keyword)) {
+		if (keyword!=null && !"".equals(keyword)) {
 			query.setQuery(keyword);
 		} else {
 			query.setQuery("*:*");

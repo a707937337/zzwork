@@ -8,10 +8,10 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.zz91</groupId>
-	<artifactId>zz91-utils</artifactId>
+	<artifactId>zz91-search-utils</artifactId>
 	<packaging>jar</packaging>
-	<version>2.0.0</version>
-	<name>zz91 develop utils</name>
+	<version>1.0.0</version>
+	<name>zz91 search utils</name>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -25,14 +25,6 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>jcifs</groupId>
-			<artifactId>jcifs</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-fileupload</groupId>
-			<artifactId>commons-fileupload</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
@@ -51,39 +43,14 @@
 			<artifactId>commons-httpclient</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>c3p0</groupId>
-			<artifactId>c3p0</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>net.spy</groupId>
-			<artifactId>memcached</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>net.sf.json-lib</groupId>
 			<artifactId>json-lib</artifactId>
 			<classifier>jdk15</classifier>
 		</dependency>
-		<dependency>
-			<groupId>org.jsoup</groupId>
-			<artifactId>jsoup</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.velocity</groupId>
-			<artifactId>velocity</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-		</dependency>
-        <!--mongodb driver-->
-	 	<dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
-            <version>2.7.3</version>
-	    </dependency>
+        <dependency>
+            <artifactId>solr-solrj</artifactId>
+            <groupId>org.apache.solr</groupId>
+            <scope>compile</scope>
+       </dependency>
 	</dependencies>
 </project>

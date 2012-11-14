@@ -22,7 +22,6 @@ import org.apache.log4j.Logger;
 
 import com.zz91.util.http.HttpUtils;
 import com.zz91.util.lang.StringUtils;
-import com.zz91.util.search.SearchEngineUtils;
 
 
 /**
@@ -32,7 +31,7 @@ import com.zz91.util.search.SearchEngineUtils;
  */
 public class TagsUtils {
 
-	private static Logger LOG = Logger.getLogger(SearchEngineUtils.class);
+	private static Logger LOG = Logger.getLogger(TagsUtils.class);
 	
 	private static TagsUtils _instance=null;
 	

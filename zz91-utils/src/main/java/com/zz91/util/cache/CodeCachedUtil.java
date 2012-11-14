@@ -5,14 +5,11 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import com.zz91.util.search.SearchEngineUtils;
-
 /**
  * 通用类别缓存工具
  * @author mays (mays@zz91.net)
  *
  */
-@Deprecated
 public class CodeCachedUtil {
 
 	public final static String CACHE_TYPE_AREA="ca";
@@ -24,7 +21,7 @@ public class CodeCachedUtil {
 	
 	public final static Integer EXPIRATION=0;
 	
-	private static Logger LOG = Logger.getLogger(SearchEngineUtils.class);
+	private static Logger LOG = Logger.getLogger(CodeCachedUtil.class);
 	
 	@SuppressWarnings("unchecked")
 	public static void init(Map<String, String> map, String cacheType, String cache){

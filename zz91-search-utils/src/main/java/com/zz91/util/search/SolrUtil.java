@@ -5,19 +5,18 @@
  */
 package com.zz91.util.search;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.StreamingUpdateSolrServer;
-
-import com.zz91.util.file.FileUtils;
-import com.zz91.util.http.HttpUtils;
-import com.zz91.util.lang.StringUtils;
-import com.zz91.util.seo.SeoUtil;
 
 /**
  * @author mays (mays@asto.com.cn)
@@ -26,7 +25,7 @@ import com.zz91.util.seo.SeoUtil;
  */
 public class SolrUtil {
 	
-	private static Logger LOG = Logger.getLogger(SeoUtil.class);
+	private static Logger LOG = Logger.getLogger(SolrUtil.class);
 	
 	private String DEFAULT_PROP = "search.properties";
 	
@@ -65,7 +64,7 @@ public class SolrUtil {
 		
 		try {
 			
-			Map<String, Object> map = FileUtils.readPropertyFile(properties, HttpUtils.CHARSET_UTF8);
+			Map<String, Object> map = readPropertyFile(properties, "utf-8");
 			this.url=(String) map.get("search.url");
 			this.soTimeout = Integer.valueOf(map.get("search.soTimeout").toString());
 			this.connectionTimeout = Integer.valueOf(map.get("search.connectionTimeout").toString());
@@ -85,7 +84,7 @@ public class SolrUtil {
 	
 	public SolrServer getSolrServer(String model) {
 		
-		if(StringUtils.isEmpty(model)){
+		if(model==null){
 			model="";
 		}
 		
@@ -133,7 +132,7 @@ public class SolrUtil {
 			boolean hight, String[] highlightField, int start, int limit){
 		SolrQuery query = new SolrQuery();
         //主查询
-		if (StringUtils.isNotEmpty(keyword)) {
+		if (keyword!=null && !"".equals(keyword)) {
 			query.setQuery(keyword);
 		} else {
 			query.setQuery("*:*");
@@ -169,5 +168,24 @@ public class SolrUtil {
         query.setStart(start);
         query.setRows(limit);
         return query;
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private HashMap readPropertyFile(String file,String charsetName) throws IOException {
+		if (charsetName==null || charsetName.trim().length()==0){
+			charsetName="gbk";
+		}
+		HashMap map = new HashMap();
+		InputStream is = SolrUtil.class.getClassLoader().getResourceAsStream(file);
+		Properties properties = new Properties();
+		properties.load(is);
+		Enumeration en = properties.propertyNames();
+		while (en.hasMoreElements()) {
+			String key = (String) en.nextElement();
+			String code = new String(properties.getProperty(key).getBytes(
+					"ISO-8859-1"), charsetName);
+			map.put(key, code);
+		}
+		return map;
 	}
 }
