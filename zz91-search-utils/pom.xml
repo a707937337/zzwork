@@ -10,7 +10,7 @@
 	<groupId>com.zz91</groupId>
 	<artifactId>zz91-search-utils</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.0</version>
+	<version>1.2.0</version>
 	<name>zz91 search utils</name>
 	<dependencies>
 		<dependency>
@@ -42,14 +42,10 @@
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>net.sf.json-lib</groupId>
-			<artifactId>json-lib</artifactId>
-			<classifier>jdk15</classifier>
-		</dependency>
         <dependency>
             <artifactId>solr-solrj</artifactId>
             <groupId>org.apache.solr</groupId>
+            <version>4.0.0</version>
             <scope>compile</scope>
        </dependency>
 	</dependencies>
