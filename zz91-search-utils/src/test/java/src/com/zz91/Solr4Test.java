@@ -14,17 +14,25 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
 
+import com.zz91.util.search.solr.SolrQueryUtil;
+import com.zz91.util.search.solr.SolrReadHandler;
+
 public class Solr4Test {
 	
 	public static final String SOLR_HOST="http://192.168.3.28:8580/solr";
+//	public static SolrServer solrServer = new ConcurrentUpdateSolrServer(SOLR_HOST+"/tradesupply", 100, 4);
+//	public static SolrServer solrServer = new HttpSolrServer(SOLR_HOST+"/tradesupply");
 
 	public static void main(String[] args) {
 		Solr4Test t=new Solr4Test();
-		for(int i=61;i<=80;i=i+20){
-			t.testUpdate(i);
-		}
-		
+//		for(int i=101;i<=140;i=i+20){
+//			t.testUpdate(i);
+//		}
+//		
+//		solrServer.shutdown();
 //		t.testQuery();
+		t.testQueryRang();
+//		solrServer.shutdown();
 	}
 	
 	public void testUpdate(int baseinfo){
@@ -38,7 +46,7 @@ public class Solr4Test {
 			document.addField("textcn", "textcn简单，浙江杭州，中国"+i);
 			document.addField("textik", "浙江杭州，中国"+i);
 			document.addField("kwSimple", "kwSimple简单的中国杭州"+i);
-			document.addField("kwMaxWord", "30服务器kwMaxWord 混合 "+i);
+			document.addField("kwMaxWord", "从300000创建索引kwMaxWord 混合 "+i);
 			document.addField("kwComplex", "kwComplex 复杂 "+i);
 			document.addField("kwInt", i);
 			document.addField("kwLong", i*100l);
@@ -60,7 +68,7 @@ public class Solr4Test {
 			e.printStackTrace();
 		}
 		
-		solrServer.shutdown();
+//		solrServer.shutdown();
 		
 	}
 	
@@ -68,6 +76,7 @@ public class Solr4Test {
 		SolrServer solrServer = new HttpSolrServer(SOLR_HOST+"/tradesupply");
 		
 		SolrQuery query=new SolrQuery();
+//		query.setQuery("kwSimple:%E6%9D%AD%E5%B7%9E");
 		query.setQuery("kwSimple:杭州");
 		query.setHighlight(true);
 		query.addHighlightField("kwSimple");
@@ -87,6 +96,44 @@ public class Solr4Test {
 	}
 	
 	public void testQueryRang(){
+		
+		SolrQuery query=new SolrQuery();
+//		query.setQuery("kwSimple:%E6%9D%AD%E5%B7%9E");
+		query.setQuery("kwSimple:杭州");
+		query.setHighlight(true);
+		query.addHighlightField("kwSimple");
+		query.setHighlightSimplePre("<em>");
+		query.setHighlightSimplePost("</em>");
+		
+		final List<Integer> docList = new ArrayList<Integer>();
+		
+		SolrQueryUtil.getInstance().search("tradesupply", query, new SolrReadHandler() {
+			
+			@Override
+			public void handlerReader(QueryResponse response)
+					throws SolrServerException {
+				List<SolrDocument> list = response.getResults();
+				for(SolrDocument doc:list){
+					docList.add(Integer.valueOf(""+doc.getFieldValue("id")));
+				}
+				//heightLight
+			}
+		});
+		
+		for(Integer i:docList){
+			System.out.println(i);
+		}
+		
+//		try {
+//			QueryResponse rsp = solrServer.query(query);
+//			System.out.println(rsp.getResults().getNumFound());
+//			List<SolrDocument> doclist=rsp.getResults();
+//			if(doclist.size()>0){
+//				System.out.println(doclist.get(0).getFieldValue("title")+" "+doclist.get(0).getFieldValue("kwSimple"));
+//			}
+//		} catch (SolrServerException e) {
+//			e.printStackTrace();
+//		}
 		
 	}
 	

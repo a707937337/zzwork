@@ -39,8 +39,9 @@
 		<dependency>
             		<groupId>commons-httpclient</groupId>
                 	<artifactId>commons-httpclient</artifactId>
-                    	<version>3.1</version>
-        	</dependency>
+                   	<version>3.1</version>
+                    <!-- <version>3.1</version> -->
+       	</dependency>
 		<dependency>
 			<groupId>net.sf.ezmorph</groupId>
 			<artifactId>ezmorph</artifactId>
