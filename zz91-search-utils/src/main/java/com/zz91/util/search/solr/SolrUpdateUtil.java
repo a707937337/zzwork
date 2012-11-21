@@ -18,6 +18,22 @@ import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrServer;
 //import org.apache.solr.client.solrj.impl.StreamingUpdateSolrServer;
 
 /**
+ * 用于提供索引创建/更新操作
+ * 
+ * 示例：
+ * 系统启动
+ * SolrUpdateUtil.getInstance().init("web.properties");
+ * 
+ * 系统关闭
+ * SolrUpdateUtil.getInstance().shutdown();
+ * SolrUpdateUtil.getInstance().shutdown("demo"); //关闭指定core
+ * 
+ * 更新操作
+ * SolrServer solrServer = SolrUpdateUtil.getInstance().getSolrServer("demo");
+ * ...
+ * solrServer.add(list);
+ * solrServer.commit();
+ * 
  * @author mays (mays@asto.com.cn)
  * 
  *         created on 2012-11-21
@@ -86,6 +102,7 @@ public class SolrUpdateUtil {
 	public void shutdown(String coreName){
 		if(SOLR_SERVER.get(coreName)!=null){
 			SOLR_SERVER.get(coreName).shutdown();
+			SOLR_SERVER.remove(coreName);
 		}
 	}
 	
@@ -93,6 +110,7 @@ public class SolrUpdateUtil {
 		for(String core: SOLR_SERVER.keySet()){
 			SOLR_SERVER.get(core).shutdown();
 		}
+		SOLR_SERVER.clear();
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })

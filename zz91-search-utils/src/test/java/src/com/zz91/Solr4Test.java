@@ -8,7 +8,6 @@ import java.util.List;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
@@ -16,6 +15,7 @@ import org.apache.solr.common.SolrInputDocument;
 
 import com.zz91.util.search.solr.SolrQueryUtil;
 import com.zz91.util.search.solr.SolrReadHandler;
+import com.zz91.util.search.solr.SolrUpdateUtil;
 
 public class Solr4Test {
 	
@@ -25,18 +25,21 @@ public class Solr4Test {
 
 	public static void main(String[] args) {
 		Solr4Test t=new Solr4Test();
-//		for(int i=101;i<=140;i=i+20){
-//			t.testUpdate(i);
-//		}
+		for(int i=101;i<=140;i=i+20){
+			t.testUpdate(i);
+			t.testUpdateCollection(i);
+		}
+		
+		SolrUpdateUtil.getInstance().shutdown();
 //		
 //		solrServer.shutdown();
 //		t.testQuery();
-		t.testQueryRang();
+//		t.testQueryRang();
 //		solrServer.shutdown();
 	}
 	
 	public void testUpdate(int baseinfo){
-		SolrServer solrServer = new ConcurrentUpdateSolrServer(SOLR_HOST+"/tradesupply", 100, 4);
+		SolrServer solrServer = SolrUpdateUtil.getInstance().getSolrServer("tradesupply");
 		
 		List<SolrInputDocument> list=new ArrayList<SolrInputDocument>();
 		for(int i=baseinfo;i<(baseinfo+20);i++){
@@ -68,7 +71,27 @@ public class Solr4Test {
 			e.printStackTrace();
 		}
 		
-//		solrServer.shutdown();
+	}
+
+	public void testUpdateCollection(int baseinfo){
+		SolrServer solrServer = SolrUpdateUtil.getInstance().getSolrServer("collection1");
+		
+		List<SolrInputDocument> list=new ArrayList<SolrInputDocument>();
+		for(int i=baseinfo;i<(baseinfo+20);i++){
+			SolrInputDocument document=new SolrInputDocument();
+			document.addField("id", i);
+			
+			list.add(document);
+		}
+		
+		try {
+			solrServer.add(list);
+			solrServer.commit();
+		} catch (SolrServerException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 	}
 	
@@ -117,6 +140,7 @@ public class Solr4Test {
 					docList.add(Integer.valueOf(""+doc.getFieldValue("id")));
 				}
 				//heightLight
+				response.getHighlighting();
 			}
 		});
 		

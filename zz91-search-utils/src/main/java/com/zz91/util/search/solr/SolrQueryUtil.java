@@ -21,6 +21,33 @@ import org.apache.solr.common.params.SolrParams;
 //import org.apache.solr.client.solrj.impl.StreamingUpdateSolrServer;
 
 /**
+ * 该工具类用于提供搜索查询
+ * 
+ * 示例：
+ * 系统启动
+ * SolrQueryUtil.getInstance().init("web.properties");
+ * 
+ * 查询操作
+ * SolrQuery query=new SolrQuery();
+ * query.setQuery("kwSimple:杭州");
+ * 
+ * final List<Integer> docList = new ArrayList<Integer>();
+ * 
+ * SolrQueryUtil.getInstance().search("tradesupply", query, new SolrReadHandler() {
+ * 
+ * 		@Override
+ * 		public void handlerReader(QueryResponse response)
+ * 			throws SolrServerException {
+ * 			List<SolrDocument> list = response.getResults();
+ * 			for(SolrDocument doc:list){
+ * 				docList.add(Integer.valueOf(""+doc.getFieldValue("id")));
+ * 			}
+ *			// response.getHighlighting();
+ * 		}
+ * });
+ * 
+ * 
+ * 
  * @author mays (mays@asto.com.cn)
  * 
  *         created on 2012-11-21
