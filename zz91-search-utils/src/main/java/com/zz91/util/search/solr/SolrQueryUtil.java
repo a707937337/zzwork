@@ -4,6 +4,8 @@
  * Created on 2012-01-05
  */
 package com.zz91.util.search.solr;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
@@ -128,13 +130,17 @@ public class SolrQueryUtil {
 		return new HttpSolrServer(solrHost+coreName, httpclient);
 	}
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "resource", "rawtypes", "unchecked" })
 	private HashMap readPropertyFile(String file,String charsetName) throws IOException {
 		if (charsetName==null || charsetName.trim().length()==0){
-			charsetName="gbk";
+			charsetName="utf-8";
 		}
 		HashMap map = new HashMap();
-		InputStream is = SolrQueryUtil.class.getClassLoader().getResourceAsStream(file);
+		InputStream is =null;
+		if(file.startsWith("file:"))
+			is=new FileInputStream(new File(file.substring(5)));
+		else
+			is=SolrQueryUtil.class.getClassLoader().getResourceAsStream(file);
 		Properties properties = new Properties();
 		properties.load(is);
 		Enumeration en = properties.propertyNames();
