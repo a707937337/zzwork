@@ -118,7 +118,7 @@ public class Solr4Test {
 		solrServer.shutdown();
 	}
 	
-	public void testQueryRang(){
+	public void testQueryRang() throws SolrServerException{
 		
 		SolrQuery query=new SolrQuery();
 //		query.setQuery("kwSimple:%E6%9D%AD%E5%B7%9E");

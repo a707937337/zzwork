@@ -60,7 +60,9 @@ public class SolrQueryUtil {
 	
 	private String DEFAULT_PROP = "search.properties";
 	
-	private String solrHost="http://192.168.3.30:8580/solr";
+	private static String solrHost="http://192.168.3.30:8580/solr";
+	private static int soTimeout=10000;
+	private static int connectionTimeout=10000;
 	
 	private static SolrQueryUtil _instance;
 	
@@ -82,9 +84,9 @@ public class SolrQueryUtil {
 		try {
 			
 			Map<String, Object> map = readPropertyFile(properties, "utf-8");
-			this.solrHost=(String) map.get("search.url");
-//			this.soTimeout = Integer.valueOf(map.get("search.soTimeout").toString());
-//			this.connectionTimeout = Integer.valueOf(map.get("search.connectionTimeout").toString());
+			solrHost=(String) map.get("search.url");
+			soTimeout = Integer.valueOf(map.get("search.soTimeout").toString());
+			connectionTimeout = Integer.valueOf(map.get("search.connectionTimeout").toString());
 //			this.defaultMaxConnectionsPerHost =  Integer.valueOf(map.get("search.defaultMaxConnectionsPerHost").toString());
 //			this.maxTotalConnections = Integer.valueOf(map.get("search.maxTotalConnections").toString());
 //			this.maxRetries =  Integer.valueOf(map.get("search.maxRetries").toString());
@@ -100,8 +102,9 @@ public class SolrQueryUtil {
 	 * @param core：即 solr core 名称，如 "/demo"
 	 * @param query
 	 * @param reader
+	 * @throws SolrServerException 
 	 */
-	public void search(String coreName, SolrParams query, SolrReadHandler reader){
+	public void search(String coreName, SolrParams query, SolrReadHandler reader) throws SolrServerException{
 		
 		SolrServer solrServer = getSolrServer(coreName);
 		
@@ -109,7 +112,7 @@ public class SolrQueryUtil {
 			QueryResponse rsp = solrServer.query(query);
 			reader.handlerReader(rsp);
 		} catch (SolrServerException e) {
-			e.printStackTrace();
+			throw new SolrServerException(e);
 		}finally{
 			if(solrServer!=null){
 				solrServer.shutdown();
@@ -127,7 +130,10 @@ public class SolrQueryUtil {
 		if(!coreName.startsWith("/")){
 			coreName = "/"+ coreName;
 		}
-		return new HttpSolrServer(solrHost+coreName, httpclient);
+		HttpSolrServer solrServer = new HttpSolrServer(solrHost+coreName, httpclient);
+		solrServer.setSoTimeout(soTimeout);
+		solrServer.setConnectionTimeout(connectionTimeout);
+		return solrServer;
 	}
 	
 	@SuppressWarnings({ "resource", "rawtypes", "unchecked" })

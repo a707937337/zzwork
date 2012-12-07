@@ -46,7 +46,9 @@ public class SolrUpdateUtil {
 	
 	private String DEFAULT_PROP = "search.properties";
 	
-	private String solrHost="http://192.168.3.30:8580/solr";
+	private static String solrHost="http://192.168.3.30:8580/solr";
+	private static int soTimeout=10000;
+	private static int connectionTimeout=10000;
 	
 	private static SolrUpdateUtil _instance;
 	
@@ -71,7 +73,9 @@ public class SolrUpdateUtil {
 		try {
 			
 			Map<String, Object> map = readPropertyFile(properties, "utf-8");
-			this.solrHost=(String) map.get("search.url");
+			solrHost=(String) map.get("search.url");
+			soTimeout = Integer.valueOf(map.get("search.soTimeout").toString());
+			connectionTimeout = Integer.valueOf(map.get("search.connectionTimeout").toString());
 			LOG.debug("Finish loading search properties:" + properties);
 			
 		} catch (IOException e) {
