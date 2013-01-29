@@ -32,6 +32,7 @@
 		<module>zz91-work-desktop</module>
 		<module>zz91-utils</module>
 		<module>zz91-search-utils</module>
+		<module>zz91-search-utils-old</module>
 	</modules>
 
 	<dependencyManagement>

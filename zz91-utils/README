@@ -3,5 +3,6 @@ UPDATE
 2013-1-28 v2.0.1 kongsj
 1.添加敏感词工具类
 2.添加测试memcache的配置web.properties
+3.修改敏感词工具类，优化代码，添加验证方法、更新缓存两个方法，增强验证过滤的功能
 
 History http://192.168.2.200:8090/x/kIAm
