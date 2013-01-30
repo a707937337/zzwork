@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 import com.zz91.util.cache.MemcachedUtils;
 /**
  * 敏感词过滤工具 
- * 需要服务器本地有敏感词词库文件 "/usr/tools/sensitive"
+ * 需要服务器本地有敏感词词库文件 "/usr/data/keylimit/limit"
  * 
  * @author kongsj
  * @date 2013-01-28
@@ -24,11 +24,12 @@ import com.zz91.util.cache.MemcachedUtils;
 public class SensitiveUtils {
 	
 	final static String ZZ91_SENSITIVE= "zz91_sensitive";
-	final static String SENSITIVE_URL = "/usr/tools/sensitive";
+	final static String SENSITIVE_URL = "/usr/data/keylimit/limit";
 	/**
 	 * 过滤敏感信息，替换为 * 
+	 * 提示 敏感词有 哪些
 	 * @param filterText 
-	 * @return map 包含两个重要参数 sensitiveSet 发现的敏感词 type:set
+	 * @return map 包含两个重要参数 sensitiveSet 发现的敏感词 type:set;
 	 * 								filterValue 敏感词过滤后的信息内容 type:string
 	 * @throws Exception
 	 */
@@ -75,6 +76,34 @@ public class SensitiveUtils {
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * 过滤敏感信息
+	 * @param filterText 需要过滤的信息
+	 * @param filter 过滤的 符号例如："*" 则所有敏感词过滤以"*"代替
+	 * @return 
+	 * @throws Exception
+	 */
+	public static String getSensitiveValue(String filterText,String filter) throws Exception {
+		// 获取敏感词 list
+		List<String> listWord = getlistWord();
+		// 判断过滤符号
+		if(filter==null){
+			filter = "*";
+		}
+		Matcher m = null;
+		for (int i = 0; i < listWord.size(); i++) {
+			Pattern p = Pattern.compile(listWord.get(i),Pattern.CASE_INSENSITIVE);
+			StringBuffer sb = new StringBuffer();
+			m = p.matcher(filterText);
+			while (m.find()) {
+				m.appendReplacement(sb, filter);
+			}
+			m.appendTail(sb);
+			filterText = sb.toString();
+		}
+		return filterText;
 	}
 
 	/**
