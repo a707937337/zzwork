@@ -16,6 +16,7 @@ import com.zz91.util.cache.MemcachedUtils;
 /**
  * 敏感词过滤工具 
  * 需要服务器本地有敏感词词库文件 "/usr/data/keylimit/limit"
+ * 词库不得包含“+”符号
  * 
  * @author kongsj
  * @date 2013-01-28
@@ -135,9 +136,11 @@ public class SensitiveUtils {
 	}
 
 	public static void main(String[] args) throws Exception {
-		String filterText = " 中国人民站起来了124ssssaa中av国人民老虎机波霸";
+		String filterText = " 中国人民站起来了124ssssaa中av国人民 老虎机波霸";
 		MemcachedUtils.getInstance().init("web.properties");
+		
 		System.out.println(SensitiveUtils.getSensitiveFilter(filterText));
 		System.out.println(SensitiveUtils.validateSensitiveFilter(filterText));
+		System.out.println(SensitiveUtils.getSensitiveValue(filterText, ""));
 	}
 }
