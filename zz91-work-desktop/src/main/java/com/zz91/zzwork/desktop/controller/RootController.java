@@ -20,6 +20,7 @@ import com.zz91.util.auth.AuthConst;
 import com.zz91.util.auth.AuthMenu;
 import com.zz91.util.auth.AuthUtils;
 import com.zz91.util.auth.SessionUser;
+import com.zz91.util.lang.StringUtils;
 import com.zz91.zzwork.desktop.domain.bs.Bs;
 import com.zz91.zzwork.desktop.domain.staff.Feedback;
 import com.zz91.zzwork.desktop.dto.ExtResult;
@@ -63,7 +64,10 @@ public class RootController extends BaseController {
 	}
 	
 	@RequestMapping
-	public ModelAndView login(Map<String, Object> out, HttpServletRequest request){
+	public ModelAndView login(Map<String, Object> out, HttpServletRequest request, String go){
+		if(StringUtils.isNotEmpty(go)){
+			out.put("gourl", bsService.queryUrl(go));
+		}
 		return null;
 	}
 	

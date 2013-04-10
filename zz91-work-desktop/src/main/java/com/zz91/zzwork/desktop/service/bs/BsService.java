@@ -56,6 +56,8 @@ public interface BsService {
 	
 	public Integer updateBsDept(Integer bsId, Integer deptId, Boolean checked);
 	
+	public String queryUrl(String key);
+	
 	/*******************以下老代码***********************/
 //	/**
 //	 * 根据登录用戶staffId 查訊所有能查看的系统 

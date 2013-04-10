@@ -55,6 +55,8 @@ public interface BsDao {
 	public Integer deleteBsDept(Integer bsId);
 	
 	public Integer deleteBsStaff(Integer bsId);
+	
+	public String queryUrl(String key);
 	/***********************************/
 	
 //	/**

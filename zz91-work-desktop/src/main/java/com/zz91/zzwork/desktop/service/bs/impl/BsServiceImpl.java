@@ -199,6 +199,11 @@ public class BsServiceImpl implements BsService {
 		}
 		return i;
 	}
+
+	@Override
+	public String queryUrl(String key) {
+		return bsDao.queryUrl(key);
+	}
 	
 	/********************/
 

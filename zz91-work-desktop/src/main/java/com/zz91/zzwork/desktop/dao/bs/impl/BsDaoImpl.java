@@ -190,6 +190,11 @@ public class BsDaoImpl extends BaseDao implements BsDao {
 	public Integer deleteBsStaff(Integer bsId) {
 		return getSqlMapClientTemplate().delete(buildId(SQL_PREFIX, "deleteBsStaffByBsId"), bsId);
 	}
+
+	@Override
+	public String queryUrl(String key) {
+		return (String) getSqlMapClientTemplate().queryForObject(SQL_PREFIX, "queryUrl");
+	}
 	
 	/***************************/
 

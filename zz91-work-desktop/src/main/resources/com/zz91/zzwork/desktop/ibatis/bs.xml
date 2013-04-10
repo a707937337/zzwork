@@ -358,4 +358,8 @@
 	<delete id="deleteBsStaffByBsId" parameterClass="java.lang.Integer">
 		delete from bs_staff where bs_id=#value#
 	</delete>
+	
+	<select id="queryUrl" parameterClass="java.lang.String" resultClass="java.lang.String">
+		select url from bs where keys=#value#
+	</select>
 </sqlMap>
