@@ -1,5 +1,8 @@
 UPDATE
 
+2013-4-2 v2.0.2 kongsj
+1.在numberutil文件中，添加业务处理时，针对不同size传入判断的size的返回值
+
 2013-1-28 v2.0.1 kongsj
 1.添加敏感词工具类
 2.添加测试memcache的配置web.properties
