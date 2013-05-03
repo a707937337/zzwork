@@ -1,5 +1,8 @@
 UPDATE
 
+2013-5-3 v2.0.3 kongsj
+1.添加分词工具，使用ikAnalzyer分词工具
+
 2013-4-2 v2.0.2 kongsj
 1.在numberutil文件中，添加业务处理时，针对不同size传入判断的size的返回值
 
