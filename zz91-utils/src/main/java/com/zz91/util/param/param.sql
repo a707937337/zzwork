@@ -18,7 +18,7 @@ default character set = utf8;
 create  table if not exists `param` (
   `id` int(20) not null auto_increment ,
   `types` varchar(64) not null ,
-  `names` varchar(254) null default null ,
+  `name` varchar(254) null default null ,
   `key` varchar(254) not null ,
   `value` varchar(254) not null ,
   `sort` tinyint(4) null default null ,

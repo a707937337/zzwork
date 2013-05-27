@@ -51,6 +51,9 @@ public class AnalysisController extends BaseController {
 	public ModelAndView export(HttpServletRequest request, HttpServletResponse response, Map<String, Object> out, 
 			Date month ) throws IOException, RowsExceededException, WriteException {
 		
+		response.setContentType("octets/stream");
+		response.addHeader("Content-Disposition", "attachment;filename=Result."+System.currentTimeMillis()+".xls");
+		
 		String monthStr=DateUtil.toString(month, "yyyy年MM月");
 		
 		List<AttendanceAnalysis> list=attendanceAnalysisService.queryAnalysisByMonth(month);

@@ -3,8 +3,9 @@ UPDATE
 2013-5-3 v2.0.3 kongsj
 1.添加分词工具，使用ikAnalzyer分词工具
 
-2013-4-2 v2.0.2 kongsj
+2013-4-2 v2.0.2 kongsj mays
 1.在numberutil文件中，添加业务处理时，针对不同size传入判断的size的返回值
+2 更改 param sql 文件，将 param 表的字段 names 改为 name，与domain对象对应
 
 2013-1-28 v2.0.1 kongsj
 1.添加敏感词工具类
