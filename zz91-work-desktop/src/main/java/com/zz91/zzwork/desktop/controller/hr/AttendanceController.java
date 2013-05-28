@@ -31,8 +31,13 @@ public class AttendanceController extends BaseController {
 	private AttendanceService attendanceService;
 
 	@RequestMapping
-	public void index(HttpServletRequest request,Map<String, Object> out) {
-
+	public void index(HttpServletRequest request,Map<String, Object> out, String code, Date from) {
+		out.put("code", code);
+		if(from==null){
+			from=DateUtil.getNowMonthFirstDay();
+		}
+		out.put("from", DateUtil.toString(from,"yyyy-MM-dd HH:mm:ss"));
+		out.put("to", DateUtil.toString(DateUtil.getDateAfterMonths(from, 1),"yyyy-MM-dd HH:mm:ss"));
 	}
 
 	@RequestMapping
@@ -45,6 +50,12 @@ public class AttendanceController extends BaseController {
 	@RequestMapping
 	public ModelAndView impt(HttpServletRequest request, Map<String, Object> out, Integer error) {
 		out.put("error", error);
+		Date from=DateUtil.getNowMonthFirstDay();
+		Date to=DateUtil.getDateAfterMonths(from, 1);
+		to=DateUtil.getDateAfterDays(to, -1);
+		out.put("from", DateUtil.toString(from, DATE_FORMAT));
+		out.put("to", DateUtil.toString(to, DATE_FORMAT));
+		
 		return null;
 	}
 
@@ -121,12 +132,13 @@ public class AttendanceController extends BaseController {
 		Calendar d=Calendar.getInstance();
 		d.setTime(targetMonthDate);
 		int m=d.get(Calendar.MONTH);
-		if(m<9 && m>4){
+		
+		if(m<9 && m>3){
 			out.put("workt", "18:00");
 		}else {
 			out.put("workt", "17:30");
 		}
-
+		
 		out.put("weekName", new String[]{ "星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六" });
 		
 		return null;

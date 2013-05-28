@@ -15,13 +15,15 @@ com.zz91.zzwork.hr.attendance.MainGrid=Ext.extend(Ext.grid.GridPanel,{
 		config = config||{};
 		Ext.apply(this,config);
 		
+		var al=config.al||true;
+		
 		var _store=new Ext.data.JsonStore({
 			root:"records",
 			totalProperty:"totalRecords",
 			remoteSort:true,
 			fields:com.zz91.zzwork.hr.attendance.AttendanceField,
 			url:Context.ROOT+"/hr/attendance/query.htm",
-			autoLoad:true
+			autoLoad:al
 		});
 		
 		var _sm=new Ext.grid.CheckboxSelectionModel();
@@ -75,7 +77,7 @@ com.zz91.zzwork.hr.attendance.MainGrid=Ext.extend(Ext.grid.GridPanel,{
 				},"->",{
 					xtype:"datefield",
 					id:"from",
-					format:"Y-m-d",
+					format:"Y-m-d H:i:s",
 					emptyText:"开始时间",
 					listeners:{
 						"blur":function(field){
@@ -93,7 +95,7 @@ com.zz91.zzwork.hr.attendance.MainGrid=Ext.extend(Ext.grid.GridPanel,{
 				},{
 					xtype:"datefield",
 					id:"to",
-					format:"Y-m-d",
+					format:"Y-m-d H:i:s",
 					emptyText:"结束时间",
 					listeners:{
 						"blur":function(field){
@@ -139,7 +141,7 @@ com.zz91.zzwork.hr.attendance.MainGrid=Ext.extend(Ext.grid.GridPanel,{
 								B["name"]=null;
 							}
 							_store.baseParams = B;
-							_store.reload({params:{"start":0, "limit":Context.PAGE_SIZE}});s
+							_store.reload({params:{"start":0, "limit":Context.PAGE_SIZE}});
 						}
 					}
 				}

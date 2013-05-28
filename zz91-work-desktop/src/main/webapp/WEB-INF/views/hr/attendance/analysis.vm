@@ -7,6 +7,20 @@ div {margin-top:10px;}
 		window.location.href=Context.ROOT+"/hr/attendance/analysis.htm?targetMonth="+Ext.get("targetMonth").dom.value;
 	}
 	
+	function resetWorkf (){
+		var workf=Ext.query("#targetWorkf")[0].value;
+		Ext.each(Ext.query(".cssworkf"),function(item,idx,allItems){
+			item.value=workf;
+		});
+	}
+	
+	function resetWorkt (){
+		var workt=Ext.query("#targetWorkt")[0].value;
+		Ext.each(Ext.query(".cssworkt"),function(item,idx,allItems){
+			item.value=workt;
+		});
+	}
+	
 	function submitForm(){
 		var dayArr=new Array();
 		var workfArr=new Array();
@@ -40,6 +54,11 @@ div {margin-top:10px;}
             统计月份：<input name="targetMonth" id="targetMonth" value="$!{targetMonth}" onblur="resetMonth();"></input>
         	<div style="color:red;">格式： yyyy-MM 例：2012-01</div>
         </div>
+		
+		<div >
+            上班时间：<input name="targetWorkf" id="targetWorkf" value="$!{workf}" onblur="resetWorkf();"></input>
+			下班时间：<input name="targetWorkt" id="targetWorkt" value="$!{workt}" onblur="resetWorkt();"></input>
+        </div>
         
         <div>
 			<table >
@@ -67,8 +86,8 @@ div {margin-top:10px;}
 							#end
 						#end
 					</td>
-                    <td><input type="text" value="$!{workf}" name="workf" id="workf-$!{md.dayOfMonth}"/></td>
-                    <td><input type="text" value="$!{workt}" name="workt" id="workt-$!{md.dayOfMonth}"/></td>
+                    <td><input type="text" value="$!{workf}" class="cssworkf" name="workf" id="workf-$!{md.dayOfMonth}"/></td>
+                    <td><input type="text" value="$!{workt}" class="cssworkt" name="workt" id="workt-$!{md.dayOfMonth}"/></td>
 				</tr>
 			#end
 			</table>

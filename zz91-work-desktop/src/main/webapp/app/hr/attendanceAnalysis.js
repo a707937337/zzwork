@@ -93,7 +93,11 @@ com.zz91.zzwork.hr.attendance.analysis.MainGrid=Ext.extend(Ext.grid.GridPanel,{
 		},{
 			header:"姓名",
 			sortable:false,
-			dataIndex:"name"
+			dataIndex:"name",
+			renderer:function(value, metadata, record, rowIndex,colIndex, store){
+				var from=Ext.util.Format.date(new Date(record.get("gmt_target").time), 'Y-m-01 00:00:00');
+				return "<a href='"+Context.ROOT+"/hr/attendance/index.htm?code="+record.get("code")+"&from="+from+"' target='_blank'>"+value+"</a>";
+			}
 		},{
 			header:"系统账号",
 			sortable:false,
