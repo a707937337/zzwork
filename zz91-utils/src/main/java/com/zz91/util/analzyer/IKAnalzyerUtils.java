@@ -33,13 +33,11 @@ import java.util.List;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
-import org.apache.lucene.analysis.tokenattributes.TypeAttribute;
 
 import com.zz91.util.analzyer.base.IKAnalyzer;
 
 /**
- * 使用IKAnalyzer进行分词的演示 2012-10-22
+ * 使用IKAnalyzer进行分词的演示 
  * 
  */
 public class IKAnalzyerUtils {
@@ -52,7 +50,7 @@ public class IKAnalzyerUtils {
 		// 获取Lucene的TokenStream对象
 		TokenStream ts = null;
 		try {
-			ts = analyzer.tokenStream("myAnalzyer",new StringReader("供应美丽的老虎机"));
+			ts = analyzer.tokenStream("myAnalzyer",new StringReader(keywords));
 			// 获取词元位置属性 位置 : 起始 | 结束
 //			OffsetAttribute offset = ts.addAttribute(OffsetAttribute.class);
 			// 获取词元文本属性
@@ -84,38 +82,10 @@ public class IKAnalzyerUtils {
 	}
 
 	public static void main(String[] args) {
-		// 构建IK分词器，使用smart分词模式
-		Analyzer analyzer = new IKAnalyzer(true);
-
-		// 获取Lucene的TokenStream对象
-		TokenStream ts = null;
-		try {
-			ts = analyzer.tokenStream("myAnalzyer",new StringReader("供应美丽的老虎机"));
-			// 获取词元位置属性
-			OffsetAttribute offset = ts.addAttribute(OffsetAttribute.class);
-			// 获取词元文本属性
-			CharTermAttribute term = ts.addAttribute(CharTermAttribute.class);
-			// 获取词元文本属性
-			TypeAttribute type = ts.addAttribute(TypeAttribute.class);
-			// 重置TokenStream（重置StringReader）
-			ts.reset();
-			// 迭代获取分词结果
-			while (ts.incrementToken()) {
-				System.out.println(offset.startOffset() + " - " + offset.endOffset() + " : " + term.toString() + " | " + type.type());
-			}
-			// 关闭TokenStream（关闭StringReader）
-			ts.end(); 
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			// 释放TokenStream的所有资源
-			if (ts != null) {
-				try {
-					ts.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+		
+		List<String> list = IKAnalzyerUtils.getAnalzyerList("美丽的老玫瑰虎机");
+		for(String str :list ){
+			System.out.println(str);
 		}
 
 	}
