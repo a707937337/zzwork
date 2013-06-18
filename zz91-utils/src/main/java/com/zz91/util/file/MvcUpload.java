@@ -30,7 +30,7 @@ public class MvcUpload {
 	final static String DEFAULT_ROOT="/usr/data/resources";
 	
 	public static final String[] WHITE_IMG={".jpg", ".jpeg", ".gif", ".bmp", ".png"};
-	public static final String[] WHITE_DOC={".doc", ".docx", ".txt"};
+	public static final String[] WHITE_DOC={".doc", ".docx", ".txt",".pdf"};
 	public static final String[] BLOCK_ANY={".bat", ".sh", ".exe"};
 	public static final long DEFAULT_SIZE=2*1024; //单位k
 
@@ -46,9 +46,14 @@ public class MvcUpload {
 
 	public static String localUpload(HttpServletRequest request, String destPath,
 			String destFilename) throws Exception{
-		
 		return localUpload(request, destPath, destFilename, 
 				DEFAULT_FIELD, WHITE_IMG, BLOCK_ANY, DEFAULT_SIZE);
+	}
+	
+	public static String localDocUpload(HttpServletRequest request, String destPath,
+			String destFilename) throws Exception{
+		return localUpload(request, destPath, destFilename, 
+				DEFAULT_FIELD, WHITE_DOC, BLOCK_ANY, DEFAULT_SIZE);
 	}
 	
 	public static String localUpload(HttpServletRequest request, String destPath,

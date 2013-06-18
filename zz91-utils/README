@@ -1,5 +1,9 @@
 UPDATE
 
+2013-5-14 v2.0.4 kongsj
+1.文件上传白名单添加pdf
+2.添加pdf转化为swf的util工具类 PdfToSwfUtils
+
 2013-5-3 v2.0.3 kongsj
 1.添加分词工具，使用ikAnalzyer分词工具
 2.发布分词工具
