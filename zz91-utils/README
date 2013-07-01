@@ -1,6 +1,9 @@
 UPDATE
 
-2013-5-14 v2.0.4 kongsj
+2013-6-18 v2.0.5 kongsj
+1.添加获取文件大小的方法
+
+2013-6-18 v2.0.4 kongsj
 1.文件上传白名单添加pdf
 2.添加pdf转化为swf的util工具类 PdfToSwfUtils
 

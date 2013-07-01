@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
+import com.zz91.util.lang.StringUtils;
+
 /**
  * @author Rolyer (rolyer.live@gmail.com)
  *
@@ -368,4 +370,16 @@ public class FileUtils {
 		}
 	}
 
+	/**
+	 * 
+	 * @param fileUrl
+	 * @return
+	 */
+	public static long getFileSize(String fileUrl){
+		if(StringUtils.isEmpty(fileUrl)||!exists(fileUrl)){
+			return 0;
+		}
+		File file = new File(fileUrl);
+		return file.length();
+	}
 }
