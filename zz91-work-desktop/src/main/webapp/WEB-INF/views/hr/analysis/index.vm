@@ -5,6 +5,10 @@
 
 	Ext.onReady(function(){
 	
+		#if("$!{schedule}"!="")
+			SCHEDULE=$!{schedule};
+		#end
+	
 		var grid = new com.zz91.zzwork.hr.attendance.analysis.MainGrid({
 			region:"center"
 		});

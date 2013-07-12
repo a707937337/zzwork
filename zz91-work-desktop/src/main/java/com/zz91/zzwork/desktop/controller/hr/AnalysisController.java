@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,8 @@ import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
 
+import net.sf.json.JSONObject;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -25,19 +28,30 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zz91.util.datetime.DateUtil;
 import com.zz91.zzwork.desktop.controller.BaseController;
 import com.zz91.zzwork.desktop.domain.hr.AttendanceAnalysis;
+import com.zz91.zzwork.desktop.domain.hr.AttendanceSchedule;
 import com.zz91.zzwork.desktop.dto.ExtResult;
 import com.zz91.zzwork.desktop.dto.PageDto;
 import com.zz91.zzwork.desktop.service.hr.AttendanceAnalysisService;
+import com.zz91.zzwork.desktop.service.hr.AttendanceScheduleService;
+import com.zz91.zzwork.desktop.util.DesktopConst;
 
 @Controller
 public class AnalysisController extends BaseController {
 
 	@Resource
 	private AttendanceAnalysisService attendanceAnalysisService;
+	@Resource
+	private AttendanceScheduleService attendanceScheduleService;
 
 	@RequestMapping
 	public void index(HttpServletRequest request,Map<String, Object> out) {
 
+		List<AttendanceSchedule> list=attendanceScheduleService.queryScheduleOnly(DesktopConst.ISUSE_TRUE);
+		Map<String, String> m=new HashMap<String, String>();
+		for(AttendanceSchedule schedule:list){
+			m.put("s"+schedule.getId(), schedule.getName());
+		}
+		out.put("schedule", JSONObject.fromObject(m).toString());
 	}
 
 	@RequestMapping

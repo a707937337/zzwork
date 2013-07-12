@@ -10,7 +10,7 @@ public interface AttendanceAnalysisDao {
  
 	public Integer insert(AttendanceAnalysis attendanceAnalysis);
 	
-	public Integer deleteByGmtTarget(Date gmtTarget);
+	public Integer deleteByGmtTarget(Date gmtTarget, Integer scheduleId);
 	
 	public List<AttendanceAnalysis> queryAnalysis(String name, String code,
 			Date month, PageDto<AttendanceAnalysis> page);

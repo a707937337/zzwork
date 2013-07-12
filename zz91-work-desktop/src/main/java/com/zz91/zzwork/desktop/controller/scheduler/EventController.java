@@ -165,7 +165,6 @@ public class EventController extends BaseController{
 		return printJson(result, out);
 	}
 	
-	@SuppressWarnings("unused")
 	@RequestMapping
 	private ModelAndView query(HttpServletRequest requet,Map<String, Object> out){
 		

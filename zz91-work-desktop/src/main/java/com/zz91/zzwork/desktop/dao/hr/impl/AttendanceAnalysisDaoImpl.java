@@ -30,8 +30,12 @@ public class AttendanceAnalysisDaoImpl extends BaseDao implements AttendanceAnal
 	}
 	
 	@Override
-	public Integer deleteByGmtTarget(Date gmtTarget) {
-		return getSqlMapClientTemplate().delete(buildId(SQL_PREFIX, "deleteByGmtTarget"), gmtTarget);
+	public Integer deleteByGmtTarget(Date gmtTarget, Integer scheduleId) {
+		Map<String, Object> root=new HashMap<String, Object>();
+		root.put("gmtTarget", gmtTarget);
+		root.put("scheduleId", scheduleId);
+		
+		return getSqlMapClientTemplate().delete(buildId(SQL_PREFIX, "deleteByGmtTarget"), root);
 	}
 	
 	@SuppressWarnings("unchecked")

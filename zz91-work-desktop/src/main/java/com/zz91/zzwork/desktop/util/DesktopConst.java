@@ -18,4 +18,8 @@ public class DesktopConst {
 	
 	public final static String DATE_TIME_FORMAT="yyyy-M-d HH:mm:ss";
 	public final static String DATE_FORMAT="yyyy-M-d";
+	
+	public final static int ISUSE_TRUE=1;
+	public final static int ISUSE_FALSE=0;
+	
 }

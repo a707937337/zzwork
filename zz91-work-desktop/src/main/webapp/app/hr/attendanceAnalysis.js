@@ -1,5 +1,7 @@
 Ext.namespace('com.zz91.zzwork.hr.attendance.analysis');
 
+var SCHEDULE={};
+
 com.zz91.zzwork.hr.attendance.analysis.Field=[
 	{name:"id",mapping:"id"},
 	{name:"name",mapping:"name"},
@@ -14,7 +16,8 @@ com.zz91.zzwork.hr.attendance.analysis.Field=[
 	{name:"day_late",mapping:"dayLate"},
 	{name:"day_early",mapping:"dayEarly"},
 	{name:"day_overtime",mapping:"dayOvertime"},
-	{name:"gmt_target",mapping:"gmtTarget"}
+	{name:"gmt_target",mapping:"gmtTarget"},
+	{name:"scheduleId",mapping:"scheduleId"}
 ];
 
 com.zz91.zzwork.hr.attendance.analysis.MainGrid=Ext.extend(Ext.grid.GridPanel,{
@@ -91,12 +94,19 @@ com.zz91.zzwork.hr.attendance.analysis.MainGrid=Ext.extend(Ext.grid.GridPanel,{
 			sortable:false,
 			dataIndex:"code"
 		},{
+			header:"班次",
+			sortable:false,
+			dataIndex:"scheduleId",
+			renderer : function(value, metadata, record, rowIndex,colIndex, store) {
+				return SCHEDULE["s"+value];
+			}	
+		},{
 			header:"姓名",
 			sortable:false,
 			dataIndex:"name",
 			renderer:function(value, metadata, record, rowIndex,colIndex, store){
 				var from=Ext.util.Format.date(new Date(record.get("gmt_target").time), 'Y-m-01 00:00:00');
-				return "<a href='"+Context.ROOT+"/hr/attendance/index.htm?code="+record.get("code")+"&from="+from+"' target='_blank'>"+value+"</a>";
+				return "<a href='"+Context.ROOT+"/hr/attendance/viewAttendance.htm?scheduleId="+record.get("scheduleId")+"&code="+record.get("code")+"&targetMonth="+from+"' target='_blank'>"+value+"</a>";
 			}
 		},{
 			header:"系统账号",

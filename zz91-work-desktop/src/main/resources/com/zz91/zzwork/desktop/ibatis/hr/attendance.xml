@@ -14,6 +14,7 @@
         <result property="gmtWork" column="gmt_work" />
         <result property="gmtCreated" column="gmt_created" />
         <result property="gmtModeified" column="gmt_modified" />
+        <result property="scheduleId" column="schedule_id" />
     </resultMap>
 	<sql id="fullcolumn" >
 		id,
@@ -22,7 +23,8 @@
 		account,
 		gmt_work,
 		gmt_created,
-		gmt_modified
+		gmt_modified,
+		schedule_id
     </sql>
 <!-- 
 
@@ -66,6 +68,9 @@
 			<isNotEmpty prepend="and" property="to" >
 				 #to# >=gmt_work
 			</isNotEmpty>
+			<isNotEmpty prepend="and" property="scheduleId" >
+				 schedule_id=#scheduleId#
+			</isNotEmpty>
 		</dynamic>
 	</sql>
 	
@@ -82,11 +87,13 @@
         <include refid="common.pageOrderBy" />
         <include refid="common.pageLimit" />
     </select>
+    
     <select id="queryAttendancesByWork" parameterClass="java.util.HashMap" resultMap="fullcolumnResult">
 		select 
         <include refid="fullcolumn" />
 	     from attendance 
         <include refid="dynamicQuery" />
+        order by gmt_work asc
     </select>
     
     <insert id="insert" parameterClass="attendance" >
@@ -96,7 +103,8 @@
 	   	account,
 	   	gmt_work,
 	   	gmt_created,
-	   	gmt_modified
+	   	gmt_modified,
+	   	schedule_id
 	   	)
 	   	values
 	   	(
@@ -105,7 +113,8 @@
 	   	#account#,
 	   	#gmtWork#,
 	   	now(),
-	   	now()
+	   	now(),
+	   	#scheduleId#
 		)
 
 		<selectKey keyProperty="id" resultClass="java.lang.Integer" >
@@ -113,10 +122,9 @@
 		</selectKey>
     </insert>
 
-    <delete
-        id="deleteAttendance"
-        parameterClass="java.util.HashMap" >
-		delete from attendance where gmt_work >= #from# and #to# >=gmt_work
+    <delete id="deleteAttendance" parameterClass="java.util.HashMap" >
+		delete from attendance where gmt_work >= #from# 
+		and #to# >=gmt_work and schedule_id=#scheduleId#
     </delete>
 
 </sqlMap>

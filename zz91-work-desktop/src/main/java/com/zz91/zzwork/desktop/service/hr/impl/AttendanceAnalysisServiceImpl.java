@@ -29,6 +29,13 @@ public class AttendanceAnalysisServiceImpl implements AttendanceAnalysisService 
 	public PageDto<AttendanceAnalysis> pageAnalysis(String name, String code,
 			Date month, PageDto<AttendanceAnalysis> page) {
 		
+		if(page.getSort()==null){
+			page.setSort("id");
+		}
+		if(page.getDir()==null){
+			page.setDir("desc");
+		}
+		
 		page.setRecords(attendanceAnalysisDao.queryAnalysis(name, code, month, page));
 		page.setTotalRecords(attendanceAnalysisDao.queryAnalysisCount(name, code, month));
 		

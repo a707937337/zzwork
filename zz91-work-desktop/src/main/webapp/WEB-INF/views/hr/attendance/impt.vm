@@ -7,6 +7,9 @@ div {margin-top:10px;}
 	#if("error"==1)
 		<div style="colr:red" >日期填写不正确</div>
 	#end
+	#if("error"==2)
+		<div style="colr:red" >考勤班次必需选择</div>
+	#end
 <form action="#springUrl('/hr/attendance/doImpt.htm')" enctype="multipart/form-data" method="post">
 
 <div >
@@ -20,7 +23,16 @@ div {margin-top:10px;}
 	<input type="radio" name="dateFormat" value="yyyy-MM-dd HH:mm" checked />2012-01-01 01:01
 	<input type="radio" name="dateFormat" value="yyyy-MM-dd HH:mm:ss" />2012-01-01 01:01:01
 	
-	</div>
+</div>
+
+<div >
+	考勤班次：
+	<select name="scheduleId" >
+		#foreach($!{sc} in $!{schedule})
+			<option  value="$!{sc.id}">$!{sc.name}</option>
+		#end
+	</select>
+</div>
 
 <div>
 	考勤数据：<input type="file" name="uploadfile" />

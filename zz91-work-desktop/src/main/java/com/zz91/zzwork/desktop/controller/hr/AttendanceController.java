@@ -4,11 +4,14 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
+import net.sf.json.JSONObject;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,15 +23,24 @@ import com.zz91.util.datetime.DateUtil;
 import com.zz91.util.lang.StringUtils;
 import com.zz91.zzwork.desktop.controller.BaseController;
 import com.zz91.zzwork.desktop.domain.hr.Attendance;
+import com.zz91.zzwork.desktop.domain.hr.AttendanceSchedule;
+import com.zz91.zzwork.desktop.domain.hr.AttendanceScheduleDetailSearch;
 import com.zz91.zzwork.desktop.dto.PageDto;
-import com.zz91.zzwork.desktop.dto.hr.WorkDay;
+import com.zz91.zzwork.desktop.dto.hr.AttendanceScheduleDetailDto;
+import com.zz91.zzwork.desktop.service.hr.AttendanceScheduleDetailService;
+import com.zz91.zzwork.desktop.service.hr.AttendanceScheduleService;
 import com.zz91.zzwork.desktop.service.hr.AttendanceService;
+import com.zz91.zzwork.desktop.util.DesktopConst;
 
 @Controller
 public class AttendanceController extends BaseController {
 
 	@Resource
 	private AttendanceService attendanceService;
+	@Resource
+	private AttendanceScheduleService attendanceScheduleService;
+	@Resource
+	private AttendanceScheduleDetailService attendanceScheduleDetailService;
 
 	@RequestMapping
 	public void index(HttpServletRequest request,Map<String, Object> out, String code, Date from) {
@@ -38,6 +50,13 @@ public class AttendanceController extends BaseController {
 		}
 		out.put("from", DateUtil.toString(from,"yyyy-MM-dd HH:mm:ss"));
 		out.put("to", DateUtil.toString(DateUtil.getDateAfterMonths(from, 1),"yyyy-MM-dd HH:mm:ss"));
+		
+		List<AttendanceSchedule> list=attendanceScheduleService.queryScheduleOnly(DesktopConst.ISUSE_TRUE);
+		Map<String, String> m=new HashMap<String, String>();
+		for(AttendanceSchedule schedule:list){
+			m.put("s"+schedule.getId(), schedule.getName());
+		}
+		out.put("schedule", JSONObject.fromObject(m).toString());
 	}
 
 	@RequestMapping
@@ -48,20 +67,26 @@ public class AttendanceController extends BaseController {
 	}
 
 	@RequestMapping
-	public ModelAndView impt(HttpServletRequest request, Map<String, Object> out, Integer error) {
+	public ModelAndView impt(HttpServletRequest request, Map<String, Object> out, Integer error, Date from, Date to) {
 		out.put("error", error);
-		Date from=DateUtil.getNowMonthFirstDay();
-		Date to=DateUtil.getDateAfterMonths(from, 1);
-		to=DateUtil.getDateAfterDays(to, -1);
+		if(from==null && to==null){
+			from=DateUtil.getNowMonthFirstDay();
+			to=DateUtil.getDateAfterMonths(from, 1);
+			to=DateUtil.getDateAfterDays(to, -1);
+		}
+		
 		out.put("from", DateUtil.toString(from, DATE_FORMAT));
 		out.put("to", DateUtil.toString(to, DATE_FORMAT));
+		
+		out.put("schedule", attendanceScheduleService.queryScheduleOnly(DesktopConst.ISUSE_TRUE));
 		
 		return null;
 	}
 
 	final static String DATE_FORMAT="yyyy-MM-dd";
 	@RequestMapping
-	public ModelAndView doImpt(HttpServletRequest request, Map<String, Object> out,String from, String to, String dateFormat) {
+	public ModelAndView doImpt(HttpServletRequest request, Map<String, Object> out,
+			String from, String to, String dateFormat, Integer scheduleId) {
 		
 		int error=0;
 		do {
@@ -89,11 +114,14 @@ public class AttendanceController extends BaseController {
 			if(file.getOriginalFilename()!=null &&
 					!file.getOriginalFilename().equals("")){
 				try {
-					attendanceService.impt(fromDate, toDate, file.getInputStream(), dateFormat);
+					attendanceService.impt(fromDate, toDate,
+							file.getInputStream(), dateFormat, scheduleId);
 				} catch (IOException e) {
 				}
 			}
 			
+			out.put("from", DateUtil.toString(fromDate, DesktopConst.DATE_TIME_FORMAT));
+			out.put("to", DateUtil.toString(toDate, DesktopConst.DATE_TIME_FORMAT));
 		} while (false);
 		
 		out.put("error", error);
@@ -124,22 +152,22 @@ public class AttendanceController extends BaseController {
 		
 		out.put("targetMonth", targetMonth);
 		
-		List<WorkDay> list=attendanceService.buildworkDays(targetMonthDate);
-		out.put("monthDay", list);
-		
-		out.put("workf", "8:30");
-		
-		Calendar d=Calendar.getInstance();
-		d.setTime(targetMonthDate);
-		int m=d.get(Calendar.MONTH);
-		
-		if(m<9 && m>3){
-			out.put("workt", "18:00");
-		}else {
-			out.put("workt", "17:30");
-		}
-		
-		out.put("weekName", new String[]{ "星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六" });
+//		List<WorkDay> list=attendanceService.buildworkDays(targetMonthDate);
+//		out.put("monthDay", list);
+//		
+//		out.put("workf", "8:30");
+//		
+//		Calendar d=Calendar.getInstance();
+//		d.setTime(targetMonthDate);
+//		int m=d.get(Calendar.MONTH);
+//		
+//		if(m<9 && m>3){
+//			out.put("workt", "18:00");
+//		}else {
+//			out.put("workt", "17:30");
+//		}
+//		
+//		out.put("weekName", new String[]{ "星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六" });
 		
 		return null;
 	}
@@ -154,9 +182,7 @@ public class AttendanceController extends BaseController {
 //	
 	@RequestMapping
 	public ModelAndView doAnalysis(HttpServletRequest request, Map<String, Object> out,
-			String targetMonth, String dayArr, String workfArr, String worktArr){
-		
-		
+			String targetMonth){
 		
 		Date targetMonthDate=null;
 		try {
@@ -165,11 +191,63 @@ public class AttendanceController extends BaseController {
 			e1.printStackTrace();
 		}
 		
-		List<WorkDay> list = attendanceService.buildWorkday(targetMonthDate, 
-				StringUtils.StringToIntegerArray(dayArr), workfArr.split(","), worktArr.split(","));
+//		List<WorkDay> list = attendanceService.buildWorkday(targetMonthDate, 
+//				StringUtils.StringToIntegerArray(dayArr), workfArr.split(","), worktArr.split(","));
 		
-		attendanceService.analysis(targetMonthDate, list);
+		attendanceService.analysis(targetMonthDate);
 		
-		return new ModelAndView("redirect:analysis.htm");
+		return new ModelAndView("redirect:analysis.htm?targetMonth="+targetMonth);
+	}
+	
+	@RequestMapping
+	public ModelAndView viewAttendance(HttpServletRequest request, 
+			Map<String, Object> out, String targetMonth, String code, 
+			Integer scheduleId){
+		
+		Date targetMonthDate=null;
+		try {
+			if(StringUtils.isNotEmpty(targetMonth)){
+				targetMonthDate =  DateUtil.getDate(targetMonth, "yyyy-MM");
+			}else {
+				targetMonthDate = DateUtil.getDate(new Date(), "yyyy-MM");
+				targetMonth=DateUtil.toString(targetMonthDate, "yyyy-MM");
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		out.put("targetMonth", targetMonth);
+		
+		AttendanceScheduleDetailSearch search = new AttendanceScheduleDetailSearch();
+		search.setGmtMonth(targetMonthDate);
+		search.setScheduleId(scheduleId);
+		
+		List< AttendanceScheduleDetailDto> list = attendanceScheduleDetailService.buildInitSchedule(search);
+		out.put("list", list);
+		
+		out.put("scheduleName", attendanceScheduleService.queryName(search.getScheduleId()));
+		
+		out.put("workf", "8:30");
+		
+		Calendar d=Calendar.getInstance();
+		d.setTime(search.getGmtMonth());
+		int m=d.get(Calendar.MONTH);
+		
+		if(m<9 && m>3){
+			out.put("workt", "18:00");
+		}else {
+			out.put("workt", "17:30");
+		}
+		
+		out.put("weekName", new String[]{ "星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六" });
+		
+		out.put("scheduleId", search.getScheduleId());
+		
+		//获取相关数据
+		Map<Long, List<Date>> targetAttendance=attendanceService.queryAttendData(code, targetMonthDate, scheduleId);
+		
+		out.put("userAttendance", targetAttendance);
+		
+		return null;
 	}
 }

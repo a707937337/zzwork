@@ -22,6 +22,7 @@ public class WorkDay implements Serializable{
 	private Long day;
 	private Long workf;
 	private Long workt;
+	private Long unixtime;
 	
 	public Long getWorkf() {
 		return workf;
@@ -59,5 +60,13 @@ public class WorkDay implements Serializable{
 	public void setDay(Long day) {
 		this.day = day;
 	}
+	public Long getUnixtime() {
+		return unixtime;
+	}
+	public void setUnixtime(Long unixtime) {
+		this.unixtime = unixtime;
+	}
+	
+	
 	
 }

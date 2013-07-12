@@ -3,6 +3,10 @@
 
 	Ext.onReady(function(){
 	
+		#if("$!{schedule}"!="")
+		SCHEDULE=$!{schedule};
+		#end
+		
 		var al=true;
 		#if("$!{code}"!="" || "${from}"!="")
 		al=false;

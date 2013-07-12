@@ -21,6 +21,7 @@ public class Attendance implements Serializable {
 	private Date    gmtWork;
 	private Date    gmtCreated;
 	private Date    gmtModeified;
+	private Integer scheduleId;
 	
 	public Attendance() {
 		
@@ -35,7 +36,6 @@ public class Attendance implements Serializable {
 		this.gmtWork = gmtWork;
 		this.gmtCreated =gmtCreated;
 		this.gmtModeified = gmtModeified;
-		
 		
 	}
 	public Integer getId() {
@@ -80,4 +80,11 @@ public class Attendance implements Serializable {
 	public void setGmtModeified(Date gmtModeified) {
 		this.gmtModeified = gmtModeified;
 	}
+	public Integer getScheduleId() {
+		return scheduleId;
+	}
+	public void setScheduleId(Integer scheduleId) {
+		this.scheduleId = scheduleId;
+	}
+	
 }

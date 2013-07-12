@@ -4,14 +4,17 @@ package com.zz91.zzwork.desktop.service.hr;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.zz91.zzwork.desktop.domain.hr.Attendance;
+import com.zz91.zzwork.desktop.domain.hr.AttendanceScheduleDetail;
 import com.zz91.zzwork.desktop.dto.PageDto;
 import com.zz91.zzwork.desktop.dto.hr.WorkDay;
 
 public interface AttendanceService {
  
-	public Boolean impt(Date from, Date to ,InputStream inputStream, String dateFormat);
+	public Boolean impt(Date from, Date to ,InputStream inputStream, 
+			String dateFormat, Integer scheduleId);
 	
 	public PageDto<Attendance> pageAttendance(String name, String code, Date from, Date to, PageDto<Attendance> page );
 	
@@ -30,10 +33,14 @@ public interface AttendanceService {
 	 * @param month
 	 * @param workDay
 	 */
-	public void analysis(Date month, List<WorkDay> workDay);
+	public void analysis(Date month);
+	
+	public void analysisBySchedule(Date month, Integer scheduleId, List<AttendanceScheduleDetail> detailList);
 	
 	public List<WorkDay> buildWorkday(Date month, Integer[] day, String[] workf, String[] workt);
 	
 	public List<WorkDay> buildworkDays(Date month);
+	
+	public Map<Long, List<Date>> queryAttendData(String code, Date month, Integer scheduleId);
 }
  

@@ -22,13 +22,19 @@ import com.zz91.util.datetime.DateUtil;
 import com.zz91.util.lang.StringUtils;
 import com.zz91.zzwork.desktop.dao.hr.AttendanceAnalysisDao;
 import com.zz91.zzwork.desktop.dao.hr.AttendanceDao;
+import com.zz91.zzwork.desktop.dao.hr.AttendanceScheduleDao;
+import com.zz91.zzwork.desktop.dao.hr.AttendanceScheduleDetailDao;
 import com.zz91.zzwork.desktop.dao.staff.StaffDao;
 import com.zz91.zzwork.desktop.domain.hr.Attendance;
 import com.zz91.zzwork.desktop.domain.hr.AttendanceAnalysis;
+import com.zz91.zzwork.desktop.domain.hr.AttendanceSchedule;
+import com.zz91.zzwork.desktop.domain.hr.AttendanceScheduleDetail;
+import com.zz91.zzwork.desktop.domain.hr.AttendanceScheduleDetailSearch;
 import com.zz91.zzwork.desktop.dto.PageDto;
 import com.zz91.zzwork.desktop.dto.hr.AttendanceDto;
 import com.zz91.zzwork.desktop.dto.hr.WorkDay;
 import com.zz91.zzwork.desktop.service.hr.AttendanceService;
+import com.zz91.zzwork.desktop.util.DesktopConst;
 
 @Component("attendanceService")
 public class AttendanceServiceImpl implements AttendanceService {
@@ -39,16 +45,23 @@ public class AttendanceServiceImpl implements AttendanceService {
 	private StaffDao staffDao;
 	@Resource
 	private AttendanceAnalysisDao attendanceAnalysisDao;
+	@Resource
+	private AttendanceScheduleDao attendanceScheduleDao;
+	@Resource
+	private AttendanceScheduleDetailDao attendanceScheduleDetailDao;
 
 	@Override
-	public Boolean impt(Date from, Date to, InputStream inputStream, String dateFormat) {
+	public Boolean impt(Date from, Date to, InputStream inputStream, 
+			String dateFormat, Integer scheduleId) {
 		
 		if(StringUtils.isEmpty(dateFormat)){
 			dateFormat="yyyy-MM";
 		}
 		
+		to=new Date(to.getTime()+86399000);
+		
 		//清理老数据
-		attendanceDao.deleteAttendance(from, to);
+		attendanceDao.deleteAttendance(from, to, scheduleId);
 		
 		//导入新数据
 		HSSFWorkbook work=null;
@@ -73,6 +86,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 				Attendance att=new Attendance();
 				att.setCode(row.getCell(0).getRichStringCellValue().toString());
 				att.setName(row.getCell(1).getRichStringCellValue().toString());
+				att.setScheduleId(scheduleId);
 				
 				String gmtwork=row.getCell(2).getRichStringCellValue().toString();
 				if(!StringUtils.isEmpty(gmtwork)){
@@ -127,79 +141,23 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * @param workDay
 	 */
 	@Override
-	public void analysis(Date month, List<WorkDay> workDay) {
+	public void analysis(Date month) {
 		
-		attendanceAnalysisDao.deleteByGmtTarget(month);
+		List<AttendanceSchedule> list=attendanceScheduleDao.queryDefault(DesktopConst.ISUSE_TRUE);
 		
-		Map<String, AttendanceAnalysis> result=new HashMap<String, AttendanceAnalysis>();
-		List<Attendance> list=null;
-		
-		//按天统计每天的数据
-		for(WorkDay wd:workDay){
-			//得到某工作日数据
-			 list = attendanceDao.queryAttendancesByWork(new Date(wd.getDay()), new Date(wd.getDay()+86400000));
+		for(AttendanceSchedule schedule:list){
+			AttendanceScheduleDetailSearch search = new AttendanceScheduleDetailSearch();
+			search.setGmtMonth(month);
+			search.setScheduleId(schedule.getId());
 			
+			List<AttendanceScheduleDetail> detailList=attendanceScheduleDetailDao.queryDefault(search);
 			
-			Map<String, AttendanceDto> dayList=buildDayRecord(list, (wd.getWorkf()+wd.getWorkt())/2, wd.getDay());
-			
-			for(String code:dayList.keySet()){
-				AttendanceDto dto=dayList.get(code);
-				AttendanceAnalysis analysisResult=result.get(code);
-				if(analysisResult==null){
-					analysisResult = new AttendanceAnalysis();
-					analysisResult.setAccount(dto.getAccount());
-					analysisResult.setName(dto.getName());
-					analysisResult.setCode(code);
-					analysisResult.setDayFull(BigDecimal.valueOf(workDay.size()));
-					analysisResult.setDayUnwork(BigDecimal.valueOf(0));
-					
-					analysisResult.setDayActual(BigDecimal.valueOf(0));
-					analysisResult.setDayUnrecord(0);
-					analysisResult.setDayLate(0);
-					analysisResult.setDayEarly(0);
-					analysisResult.setDayOvertime(0);
-					
-					result.put(code, analysisResult); //?
-				}
-				
-				analysisResult.setDayActual(BigDecimal.valueOf(analysisResult.getDayActual().doubleValue()+1));
-				
-				if(dto.getWorkf()!=null){
-					if(dto.getWorkf()>wd.getWorkf()){
-						if(dto.getWorkf()>(wd.getWorkf()+30*60*1000)){
-							//旷工半天
-							analysisResult.setDayUnwork(BigDecimal.valueOf(analysisResult.getDayUnwork().doubleValue()+.5d));
-						}else{
-							analysisResult.setDayLate(analysisResult.getDayLate()+1);
-						}
-					}
-				}else{
-					analysisResult.setDayUnrecord(analysisResult.getDayUnrecord()+1);
-				}
-				
-				if(dto.getWorkt()!=null){
-					if(dto.getWorkt()<wd.getWorkt()){
-						analysisResult.setDayEarly(analysisResult.getDayEarly()+1);
-					}else{
-						if(dto.getWorkt()>(20*60*60*1000)){
-							analysisResult.setDayOvertime(analysisResult.getDayOvertime()+1);
-						}
-					}
-					
-				}else{
-					analysisResult.setDayUnrecord(analysisResult.getDayUnrecord()+1);
-				}
-			}
-			
+			analysisBySchedule(month, schedule.getId(), detailList);
 		}
 		
-		//保存统计结果
-		for(String code:result.keySet()){
-			AttendanceAnalysis analysisResult=result.get(code);
-			analysisResult.setGmtTarget(month);
-			attendanceAnalysisDao.insert(analysisResult);
-		}
 	}
+	
+	
 	
 	private Map<String, AttendanceDto> buildDayRecord(List<Attendance> list, Long half, Long monthDay){
 		Map<String, AttendanceDto> dtoMap=new HashMap<String, AttendanceDto>();
@@ -276,10 +234,121 @@ public class AttendanceServiceImpl implements AttendanceService {
 			WorkDay wd=new WorkDay();
 			wd.setDayOfWeek(calendar.get(Calendar.DAY_OF_WEEK));
 			wd.setDayOfMonth(i);
+			wd.setUnixtime(calendar.getTimeInMillis());
 			list.add(wd);
 		}
 		
 		return list;
+	}
+
+	@Override
+	public Map<Long, List<Date>> queryAttendData(String code, Date month, Integer scheduleId) {
+		
+		Date nextMonth=DateUtil.getDateAfterMonths(month, 1);
+
+		List<Attendance> list=attendanceDao.queryAttendancesByWork(month, nextMonth, code, scheduleId);
+		
+		Map<Long, List<Date>> result=new HashMap<Long, List<Date>>();
+		Date day=null;
+		for(Attendance obj:list){
+			
+			try {
+				day = DateUtil.getDate(obj.getGmtWork(), "yyyy-MM-dd 00:00:00");
+			} catch (ParseException e) {
+			}
+			
+			if(day==null){
+				continue ;
+			}
+			
+			if(result.get(day.getTime())==null){
+				result.put(day.getTime(), new ArrayList<Date>());
+			}
+			result.get(day.getTime()).add(obj.getGmtWork());
+			
+			day=null;
+		}
+		
+		return result;
+	}
+
+	public void analysisBySchedule(Date month, Integer scheduleId, List<AttendanceScheduleDetail> detailList) {
+		
+		attendanceAnalysisDao.deleteByGmtTarget(month, scheduleId);
+		
+		Map<String, AttendanceAnalysis> result=new HashMap<String, AttendanceAnalysis>();
+		List<Attendance> list=null;
+		
+		//按天统计每天的数据
+		for(AttendanceScheduleDetail wd:detailList){
+			//得到某工作日数据
+			 list = attendanceDao.queryAttendancesByWork(wd.getDay(), DateUtil.getDateAfterDays(wd.getDay(), 1), null, scheduleId);
+			
+			
+			Map<String, AttendanceDto> dayList=buildDayRecord(list, (wd.getWorkf()+wd.getWorkt())/2, wd.getDay().getTime());
+			
+			for(String code:dayList.keySet()){
+				AttendanceDto dto=dayList.get(code);
+				AttendanceAnalysis analysisResult=result.get(code);
+				if(analysisResult==null){
+					analysisResult = new AttendanceAnalysis();
+					analysisResult.setAccount(dto.getAccount());
+					analysisResult.setName(dto.getName());
+					analysisResult.setCode(code);
+					analysisResult.setDayFull(BigDecimal.valueOf(detailList.size()));
+					analysisResult.setDayUnwork(BigDecimal.valueOf(0));
+					
+					analysisResult.setDayActual(BigDecimal.valueOf(0));
+					analysisResult.setDayUnrecord(0);
+					analysisResult.setDayLate(0);
+					analysisResult.setDayEarly(0);
+					analysisResult.setDayOvertime(0);
+					
+					result.put(code, analysisResult); //?
+				}
+				
+				analysisResult.setDayActual(BigDecimal.valueOf(analysisResult.getDayActual().doubleValue()+1));
+				
+				if(dto.getWorkf()!=null){
+					if(dto.getWorkf()>wd.getWorkf()){
+						if(dto.getWorkf()>(wd.getWorkf()+30*60*1000)){
+							//旷工半天
+							analysisResult.setDayUnwork(BigDecimal.valueOf(analysisResult.getDayUnwork().doubleValue()+.5d));
+							//这里很可能是请假，可以注成请假
+							
+						}else{
+							analysisResult.setDayLate(analysisResult.getDayLate()+1);
+						}
+					}
+				}else{
+					analysisResult.setDayUnrecord(analysisResult.getDayUnrecord()+1);
+				}
+				
+				if(dto.getWorkt()!=null){
+					if(dto.getWorkt()<wd.getWorkt()){
+						analysisResult.setDayEarly(analysisResult.getDayEarly()+1);
+						//下午有记录的可能是请假，不是早退
+					}else{
+						if(dto.getWorkt()>(20*60*60*1000)){
+							analysisResult.setDayOvertime(analysisResult.getDayOvertime()+1);
+						}
+					}
+				}else{
+					analysisResult.setDayUnrecord(analysisResult.getDayUnrecord()+1);
+				}
+				
+				//早上没有记录，下午没有记录＝矿工
+			}
+			
+		}
+		
+		//保存统计结果
+		for(String code:result.keySet()){
+			AttendanceAnalysis analysisResult=result.get(code);
+			analysisResult.setGmtTarget(month);
+			analysisResult.setScheduleId(scheduleId);
+			attendanceAnalysisDao.insert(analysisResult);
+		}
 	}
 	
 }

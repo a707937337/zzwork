@@ -23,6 +23,7 @@
 	    <result property="dayEarly" column="day_early"/>
 	    <result property="dayOvertime" column="day_overtime"/>
 	    <result property="gmtTarget" column="gmt_target"/>
+	    <result property="scheduleId" column="schedule_id"/>
 	</resultMap>
 
 	<sql id="fullcolumn">
@@ -39,7 +40,8 @@
 		`day_late`,
 		`day_early`,
 		`day_overtime`,
-		`gmt_target`
+		`gmt_target`,
+		`schedule_id`
 	</sql>
 	
 	<insert id="insert" parameterClass="attendanceAnalysis" >
@@ -59,7 +61,8 @@
 		`day_overtime`,
 		`gmt_target`,
 		`gmt_created`,
-		`gmt_modified`)
+		`gmt_modified`,
+		`schedule_id`)
 		VALUES
 		(
 		#code#,
@@ -76,7 +79,8 @@
 		#dayOvertime#,
 		#gmtTarget#,
 		now(),
-		now()
+		now(),
+		#scheduleId#
 		)
 
 		<selectKey keyProperty="id" resultClass="java.lang.Integer" >
@@ -84,9 +88,9 @@
 		</selectKey>
     </insert>
     
-	<delete id="deleteByGmtTarget" parameterClass="java.util.Date">
+	<delete id="deleteByGmtTarget" parameterClass="java.util.HashMap">
 	    delete from attendance_analysis
-	    where gmt_target=#value#
+	    where gmt_target=#gmtTarget# and schedule_id=#scheduleId#
 	</delete>
 	
 	<sql id="dynamicQuery">

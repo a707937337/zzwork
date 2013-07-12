@@ -33,6 +33,7 @@ public class AttendanceAnalysis implements Serializable{
 	private Date gmtTarget;
 	private Date gmtCreated;
 	private Date gmtModified;
+	private Integer scheduleId;
 	
 	public Integer getId() {
 		return id;
@@ -130,7 +131,11 @@ public class AttendanceAnalysis implements Serializable{
 	public void setGmtModified(Date gmtModified) {
 		this.gmtModified = gmtModified;
 	}
-	
-	
+	public Integer getScheduleId() {
+		return scheduleId;
+	}
+	public void setScheduleId(Integer scheduleId) {
+		this.scheduleId = scheduleId;
+	}
 	
 }

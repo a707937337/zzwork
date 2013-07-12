@@ -25,7 +25,6 @@ import com.zz91.util.auth.SessionUser;
  */
 public class BaseController {
 
-	@SuppressWarnings("unchecked")
 	public ModelAndView printJson(Object obj, Map<String, Object> out) {
 		String jsonString = "";
 		if (obj instanceof List) {

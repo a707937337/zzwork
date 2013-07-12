@@ -7,8 +7,11 @@ com.zz91.zzwork.hr.attendance.AttendanceField=[
 	{name:"account",mapping:"account"},
 	{name:"gmt_work",mapping:"gmtWork"},
 	{name:"gmt_created",mapping:"gmtCreated"},
-	{name:"gmt_modeified",mapping:"gmtModeified"}
+	{name:"gmt_modeified",mapping:"gmtModeified"},
+	{name:"scheduleId",mapping:"scheduleId"}
 ];
+
+var SCHEDULE={};
 
 com.zz91.zzwork.hr.attendance.MainGrid=Ext.extend(Ext.grid.GridPanel,{
 	constructor:function(config){
@@ -46,6 +49,13 @@ com.zz91.zzwork.hr.attendance.MainGrid=Ext.extend(Ext.grid.GridPanel,{
 			header:"系统账号",
 			sortable:false,
 			dataIndex:"account"
+		},{
+			header:"班次",
+			sortable:false,
+			dataIndex:"scheduleId",
+			renderer : function(value, metadata, record, rowIndex,colIndex, store) {
+				return SCHEDULE["s"+value];
+			}	
 		},{
 			header:"出勤时间",
 			sortable:false,

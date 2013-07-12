@@ -27,6 +27,8 @@
 	<!-- hr -->
 	<sqlMap resource="com/zz91/zzwork/desktop/ibatis/hr/attendance.xml" />
 	<sqlMap resource="com/zz91/zzwork/desktop/ibatis/hr/attendance_analysis.xml" />
+	<sqlMap resource="com/zz91/zzwork/desktop/ibatis/hr/attendance_schedule.xml" />
+	<sqlMap resource="com/zz91/zzwork/desktop/ibatis/hr/attendance_schedule_detail.xml" />
 	<!-- 
 	<sqlMap resource="com/zz91/zzwork/desktop/ibatis/hr/attendanceCount.xml" />
 	 -->

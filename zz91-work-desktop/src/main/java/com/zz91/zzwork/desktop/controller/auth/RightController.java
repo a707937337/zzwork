@@ -60,7 +60,7 @@ public class RightController extends BaseController{
 		return printJson(result, out);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping
 	public ModelAndView queryOneRight(HttpServletRequest request, Map<String, Object> out, String code){
 		AuthRight right = authRightService.queryOneRight(code);
