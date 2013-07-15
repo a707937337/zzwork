@@ -8,6 +8,7 @@ package com.zz91.zzwork.desktop.controller;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zz91.util.datetime.DateUtil;
 import com.zz91.util.lang.StringUtils;
+import com.zz91.util.mail.MailUtil;
 import com.zz91.zzwork.desktop.domain.auth.AuthRole;
 import com.zz91.zzwork.desktop.domain.staff.Staff;
 import com.zz91.zzwork.desktop.dto.ExtResult;
@@ -77,6 +79,16 @@ public class StaffController extends BaseController{
 			e.printStackTrace();
 		}
 		Integer i = staffService.createStaff(staff, staff.getAccount(), password, StringUtils.StringToIntegerArray(roleArr));
+		
+		if(StringUtils.isEmail(staff.getEmail())){
+			Map<String, Object> dataMap=new HashMap<String, Object>();
+			dataMap.put("staff", staff);
+			dataMap.put("pwd", password);
+			MailUtil.getInstance().sendMail(staff.getName()+"，您的工作平台账号开通啦，快来看一下吧！",
+					staff.getEmail(), null, null, "zz91",
+					"zzwork-staff", dataMap, MailUtil.PRIORITY_DEFAULT);
+		}
+		
 		ExtResult result = new ExtResult();
 		if(i!=null && i.intValue()>0){
 			result.setSuccess(true);
