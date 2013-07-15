@@ -116,6 +116,7 @@ public class StaffServiceImpl implements StaffService {
 			sessionUser.setDeptCode(staff.getDeptCode());
 			sessionUser.setName(staff.getName());
 			sessionUser.setRightArr(rightArr);
+			sessionUser.setStaffNo(staff.getStaffNo());
 			
 		} while (false);
 		

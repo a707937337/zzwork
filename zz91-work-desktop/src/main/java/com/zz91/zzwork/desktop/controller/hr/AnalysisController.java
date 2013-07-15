@@ -25,6 +25,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.zz91.util.auth.SessionUser;
 import com.zz91.util.datetime.DateUtil;
 import com.zz91.zzwork.desktop.controller.BaseController;
 import com.zz91.zzwork.desktop.domain.hr.AttendanceAnalysis;
@@ -145,5 +146,21 @@ public class AnalysisController extends BaseController {
 		}
 		
 		return printJson(result, out);
+	}
+	
+	@RequestMapping
+	public ModelAndView my(HttpServletRequest request, Map<String, Object> out,
+			Date gmtTarget){
+		
+		SessionUser user=getCachedUser(request);
+		out.put("staffNo", user.getStaffNo());
+		
+		List<AttendanceSchedule> list=attendanceScheduleService.queryScheduleOnly(DesktopConst.ISUSE_TRUE);
+		Map<String, String> m=new HashMap<String, String>();
+		for(AttendanceSchedule schedule:list){
+			m.put("s"+schedule.getId(), schedule.getName());
+		}
+		out.put("schedule", JSONObject.fromObject(m).toString());
+		return null;
 	}
 }

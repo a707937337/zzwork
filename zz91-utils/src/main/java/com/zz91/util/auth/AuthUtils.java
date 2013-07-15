@@ -81,6 +81,7 @@ public class AuthUtils {
 				sessionUser.setAccount(doc.select("#account").val());
 				sessionUser.setDeptCode(doc.select("#deptCode").val());
 				sessionUser.setName(doc.select("#name").val());
+				sessionUser.setStaffNo(doc.select("#staffNo").val());
 				
 				String right = doc.select("#rightArr").val();
 				sessionUser.setRightArr(right.split("\\|"));
@@ -125,6 +126,8 @@ public class AuthUtils {
 			sessionUser.setAccount(doc.select("#account").val());
 			sessionUser.setDeptCode(doc.select("#deptCode").val());
 			sessionUser.setName(doc.select("#name").val());
+			sessionUser.setStaffNo(doc.select("#staffNo").val());
+			
 			sessionUser.setTicket(ticket);
 			
 			String right = doc.select("#rightArr").val();

@@ -14,5 +14,6 @@ public interface AttendanceAnalysisService {
 	public Integer updateAnalysis(AttendanceAnalysis analysis);
 	
 	public List<AttendanceAnalysis> queryAnalysisByMonth(Date month);
+	
 }
  

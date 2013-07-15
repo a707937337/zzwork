@@ -1,5 +1,8 @@
 UPDATE
 
+2013-7-15 v2.0.6 mays
+1 更改SessionUser，增加staffNo属性，以获取员工工号
+
 2013-6-18 v2.0.5 kongsj
 1.添加获取文件大小的方法
 

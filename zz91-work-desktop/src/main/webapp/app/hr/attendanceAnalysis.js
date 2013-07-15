@@ -20,7 +20,9 @@ com.zz91.zzwork.hr.attendance.analysis.Field=[
 	{name:"scheduleId",mapping:"scheduleId"}
 ];
 
-com.zz91.zzwork.hr.attendance.analysis.MainGrid=Ext.extend(Ext.grid.GridPanel,{
+com.zz91.zzwork.hr.attendance.analysis.BaseGrid=Ext.extend(Ext.grid.GridPanel,{
+	enableEdit:true,
+	autoLoad:true,
 	constructor:function(config){
 		config = config||{};
 		Ext.apply(this,config);
@@ -31,54 +33,7 @@ com.zz91.zzwork.hr.attendance.analysis.MainGrid=Ext.extend(Ext.grid.GridPanel,{
 			remoteSort:true,
 			fields:com.zz91.zzwork.hr.attendance.analysis.Field,
 			url:Context.ROOT+"/hr/analysis/query.htm",
-			autoLoad:true
-		});
-		
-		var editor = new Ext.ux.grid.RowEditor({
-			saveText:"更新",
-			cancelText:"取消",
-			commitChangesText:"你需要先保存或取消当前的变更",
-			errorText:"错误",
-			listeners:{
-				"afteredit":function(edit, changes, r, rowIdx){
-					Ext.Ajax.request({
-				        url:Context.ROOT+"/hr/analysis/update.htm",
-				        params:{
-				        	"id":r.get("id"),
-				        	"dayFull":r.get("day_full"),
-				        	"dayActual":r.get("day_actual"),
-				        	"dayLeave":r.get("day_leave"),
-				        	"dayOther":r.get("day_other"),
-				        	"dayUnwork":r.get("day_unwork"),
-				        	"dayUnrecord":r.get("day_unrecord"),
-				        	"dayLate":r.get("day_late"),
-				        	"dayEarly":r.get("day_early"),
-				        	"dayOvertime":r.get("day_overtime")
-				        },
-				        success:function(response,opt){
-				            var obj = Ext.decode(response.responseText);
-				            if(obj.success){
-				                com.zz91.zzwork.utils.Msg(MESSAGE.picTitleInfo,MESSAGE.saveSuccess);
-				            }else{
-				                Ext.MessageBox.show({
-				                    title:MESSAGE.title,
-				                    msg : MESSAGE.saveFailure,
-				                    buttons:Ext.MessageBox.OK,
-				                    icon:Ext.MessageBox.ERROR
-				                });
-				            }
-				        },
-				        failure:function(response,opt){
-				            Ext.MessageBox.show({
-				                title:MESSAGE.title,
-				                msg : MESSAGE.submitFailure,
-				                buttons:Ext.MessageBox.OK,
-				                icon:Ext.MessageBox.ERROR
-				            });
-				        }
-				    });
-				}
-			}
+			autoLoad:this.autoLoad
 		});
 		
 		var _sm=new Ext.grid.CheckboxSelectionModel();
@@ -191,12 +146,85 @@ com.zz91.zzwork.hr.attendance.analysis.MainGrid=Ext.extend(Ext.grid.GridPanel,{
 		}
 		]);
 		
+		var plugins=[];
+		if(this.enableEdit){
+			var editor = new Ext.ux.grid.RowEditor({
+				saveText:"更新",
+				cancelText:"取消",
+				commitChangesText:"你需要先保存或取消当前的变更",
+				errorText:"错误",
+				listeners:{
+					"afteredit":function(edit, changes, r, rowIdx){
+						Ext.Ajax.request({
+					        url:Context.ROOT+"/hr/analysis/update.htm",
+					        params:{
+					        	"id":r.get("id"),
+					        	"dayFull":r.get("day_full"),
+					        	"dayActual":r.get("day_actual"),
+					        	"dayLeave":r.get("day_leave"),
+					        	"dayOther":r.get("day_other"),
+					        	"dayUnwork":r.get("day_unwork"),
+					        	"dayUnrecord":r.get("day_unrecord"),
+					        	"dayLate":r.get("day_late"),
+					        	"dayEarly":r.get("day_early"),
+					        	"dayOvertime":r.get("day_overtime")
+					        },
+					        success:function(response,opt){
+					            var obj = Ext.decode(response.responseText);
+					            if(obj.success){
+					                com.zz91.zzwork.utils.Msg(MESSAGE.picTitleInfo,MESSAGE.saveSuccess);
+					            }else{
+					                Ext.MessageBox.show({
+					                    title:MESSAGE.title,
+					                    msg : MESSAGE.saveFailure,
+					                    buttons:Ext.MessageBox.OK,
+					                    icon:Ext.MessageBox.ERROR
+					                });
+					            }
+					        },
+					        failure:function(response,opt){
+					            Ext.MessageBox.show({
+					                title:MESSAGE.title,
+					                msg : MESSAGE.submitFailure,
+					                buttons:Ext.MessageBox.OK,
+					                icon:Ext.MessageBox.ERROR
+					            });
+					        }
+					    });
+					}
+				}
+			});
+			plugins=[editor];
+		}
+		
 		var c={
 			store:_store,
 			sm:_sm,
 			cm:_cm,
 			loadMask:MESSAGE.loadmask,
-			plugins:[editor],
+			plugins:plugins,
+			bbar: new Ext.PagingToolbar({
+				pageSize : Context.PAGE_SIZE,
+				store : _store,
+				displayInfo: true,
+				displayMsg: MESSAGE.paging.displayMsg,
+				emptyMsg : MESSAGE.paging.emptyMsg,
+				beforePageText : MESSAGE.paging.beforePageText,
+				afterPageText : MESSAGE.paging.afterPageText,
+				paramNames : MESSAGE.paging.paramNames
+			})
+		}
+		
+		com.zz91.zzwork.hr.attendance.analysis.BaseGrid.superclass.constructor.call(this, c);
+	}
+});
+
+com.zz91.zzwork.hr.attendance.analysis.MainGrid=Ext.extend(com.zz91.zzwork.hr.attendance.analysis.BaseGrid,{
+	constructor:function(config){
+		config = config||{};
+		Ext.apply(this,config);
+		
+		var c={
 			tbar:[{
 				text:"导出",
 				iconCls:"saveas16",
@@ -261,19 +289,25 @@ com.zz91.zzwork.hr.attendance.analysis.MainGrid=Ext.extend(Ext.grid.GridPanel,{
 						}
 					}
 				}
-			],
-			bbar: new Ext.PagingToolbar({
-				pageSize : Context.PAGE_SIZE,
-				store : _store,
-				displayInfo: true,
-				displayMsg: MESSAGE.paging.displayMsg,
-				emptyMsg : MESSAGE.paging.emptyMsg,
-				beforePageText : MESSAGE.paging.beforePageText,
-				afterPageText : MESSAGE.paging.afterPageText,
-				paramNames : MESSAGE.paging.paramNames
-			})
+			]
 		}
 		
 		com.zz91.zzwork.hr.attendance.analysis.MainGrid.superclass.constructor.call(this, c);
+	}
+});
+
+com.zz91.zzwork.hr.attendance.analysis.ViewGrid=Ext.extend(com.zz91.zzwork.hr.attendance.analysis.BaseGrid,{
+	enableEdit:true,
+	autoLoad:true,
+	constructor:function(config){
+		config = config||{};
+		Ext.apply(this,config);
+		
+		var c={
+			enableEdit:false,
+			autoLoad:false
+		}
+		
+		com.zz91.zzwork.hr.attendance.analysis.ViewGrid.superclass.constructor.call(this, c);
 	}
 });

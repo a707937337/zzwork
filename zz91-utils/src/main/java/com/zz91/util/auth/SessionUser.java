@@ -25,6 +25,8 @@ public class SessionUser implements Serializable{
 	private String ticket;
 	private String key;
 	
+	private String staffNo;
+	
 	public final static String SESSION_KEY="zz91authorizesession";
 	
 	/**
@@ -111,5 +113,12 @@ public class SessionUser implements Serializable{
 	public void setRightArr(String[] rightArr) {
 		this.rightArr = rightArr;
 	}
+	public String getStaffNo() {
+		return staffNo;
+	}
+	public void setStaffNo(String staffNo) {
+		this.staffNo = staffNo;
+	}
+	
 	
 }
