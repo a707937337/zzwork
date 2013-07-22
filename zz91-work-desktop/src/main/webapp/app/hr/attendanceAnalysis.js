@@ -224,6 +224,8 @@ com.zz91.zzwork.hr.attendance.analysis.MainGrid=Ext.extend(com.zz91.zzwork.hr.at
 		config = config||{};
 		Ext.apply(this,config);
 		
+		var _this=this;
+		
 		var c={
 			tbar:[{
 				text:"导出",
@@ -243,6 +245,7 @@ com.zz91.zzwork.hr.attendance.analysis.MainGrid=Ext.extend(com.zz91.zzwork.hr.at
 					emptyText:"统计时间",
 					listeners:{
 						"blur":function(field){
+							var _store=_this.getStore();
 							var B = _store.baseParams;
 							B = B||{};
 							if(field.getValue()!=""){
@@ -260,6 +263,7 @@ com.zz91.zzwork.hr.attendance.analysis.MainGrid=Ext.extend(com.zz91.zzwork.hr.at
 					emptyText:"按登记号查询",
 					listeners:{
 						"blur":function(field){
+							var _store=_this.getStore();
 							var B = _store.baseParams;
 							B = B||{};
 							if(field.getValue()!=""){
@@ -277,6 +281,7 @@ com.zz91.zzwork.hr.attendance.analysis.MainGrid=Ext.extend(com.zz91.zzwork.hr.at
 					emptyText:"按姓名查询",
 					listeners:{
 						"blur":function(field){
+							var _store=_this.getStore();
 							var B = _store.baseParams;
 							B = B||{};
 							if(field.getValue()!=""){

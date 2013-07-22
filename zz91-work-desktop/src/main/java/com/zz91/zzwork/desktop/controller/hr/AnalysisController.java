@@ -147,7 +147,7 @@ public class AnalysisController extends BaseController {
 		
 		return printJson(result, out);
 	}
-	
+	 
 	@RequestMapping
 	public ModelAndView my(HttpServletRequest request, Map<String, Object> out,
 			Date gmtTarget){
