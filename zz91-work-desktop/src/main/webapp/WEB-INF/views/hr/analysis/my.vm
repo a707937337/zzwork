@@ -14,11 +14,7 @@
 			region:"center"
 		});
 		
-		#if("$!{staffNo}"!="")
-		grid.getStore().baseParams["code"]="$!{staffNo}";
-		#else
-		grid.getStore().baseParams["code"]="errorcode";
-		#end
+		grid.getStore().baseParams["name"]="$!{name}";
 		grid.getStore().reload({params:{"start":0, "limit":Context.PAGE_SIZE}});
 
 		var viewport = new Ext.Viewport({

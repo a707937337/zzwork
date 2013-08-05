@@ -153,7 +153,7 @@ public class AnalysisController extends BaseController {
 			Date gmtTarget){
 		
 		SessionUser user=getCachedUser(request);
-		out.put("staffNo", user.getStaffNo());
+		out.put("name", user.getName());
 		
 		List<AttendanceSchedule> list=attendanceScheduleService.queryScheduleOnly(DesktopConst.ISUSE_TRUE);
 		Map<String, String> m=new HashMap<String, String>();
