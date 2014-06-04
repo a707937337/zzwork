@@ -9,7 +9,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import com.zz91.util.cache.MemcachedUtils;
+import com.zz91.util.cache.JedisClientUtils;
 import com.zz91.util.domain.Param;
 import com.zz91.util.param.ParamUtils;
 import com.zz91.zzwork.desktop.service.auth.ParamService;
@@ -27,11 +27,12 @@ public class InitSystem {
 		List<Param> paramList = paramService.queryParam();
 		ParamUtils.getInstance().init(paramList, null);
 		
-		MemcachedUtils.getInstance().init();
+		JedisClientUtils.getInstance().init();
+//		MemcachedUtils.getInstance().init();
 	}
 	
 	public void shutdown(){
-		MemcachedUtils.getInstance().shutdownClient();
+//		MemcachedUtils.getInstance().shutdownClient();
 	}
 
 }

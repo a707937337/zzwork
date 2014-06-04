@@ -15,13 +15,15 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONObject;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zz91.util.auth.AuthMenu;
 import com.zz91.util.auth.SessionUser;
-import com.zz91.util.cache.MemcachedUtils;
+import com.zz91.util.cache.JedisClientUtils;
 import com.zz91.util.encrypt.MD5;
 import com.zz91.util.lang.StringUtils;
 import com.zz91.zzwork.desktop.service.bs.BsService;
@@ -75,7 +77,9 @@ public class ApiController extends BaseController {
 			out.put("user", sessionUser);
 			
 			//保存6小时
-			MemcachedUtils.getInstance().getClient().set(ticket, 6*60*60, sessionUser);
+//			MemcachedUtils.getInstance().getClient().set(ticket, 6*60*60, sessionUser);
+			JedisClientUtils.getInstance().getClient().setex(ticket, 6*60*60, JSONObject.fromObject(sessionUser).toString());
+			
 		} while (false);
 		
 		return new ModelAndView("/api/ssoUser");
@@ -85,8 +89,17 @@ public class ApiController extends BaseController {
 	public ModelAndView ssoTicket(HttpServletRequest request, Map<String, Object> out, String t, String pc){
 //		MemcachedUtils.getInstance().getClient(DesktopConst.CACHE_ZZWORK);
 		//TODO 可以换成数据库方式实现
-		SessionUser sessionUser = (SessionUser) MemcachedUtils.getInstance().getClient().get(t);
+//		SessionUser sessionUser = (SessionUser) MemcachedUtils.getInstance().getClient().get(t);
+		
+		String userStr = JedisClientUtils.getInstance().getClient().get(t);
+		
 		do {
+			if(StringUtils.isEmpty(userStr)){
+				break;
+			}
+			
+			SessionUser sessionUser = (SessionUser) JSONObject.toBean(JSONObject.fromObject(userStr), SessionUser.class);
+			
 			if(sessionUser==null){
 				break;
 			}
@@ -123,7 +136,7 @@ public class ApiController extends BaseController {
 	
 	@RequestMapping
 	public ModelAndView ssoLogout(HttpServletRequest request, Map<String, Object> out, String t){
-		MemcachedUtils.getInstance().getClient().delete(t);
+//		MemcachedUtils.getInstance().getClient().delete(t);
 		return printJson("{result:true}", out);
 	}
 	

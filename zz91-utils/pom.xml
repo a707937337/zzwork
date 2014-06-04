@@ -60,7 +60,7 @@
 		</dependency>
 		<dependency>
 			<groupId>net.spy</groupId>
-			<artifactId>memcached</artifactId>
+			<artifactId>spymemcached</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.json-lib</groupId>
@@ -79,7 +79,7 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
 		</dependency>
-		<!--mongodb driver-->
+		<!--mongodb driver -->
 		<dependency>
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongo-java-driver</artifactId>
@@ -90,5 +90,11 @@
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-core</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+		</dependency>
+		
 	</dependencies>
 </project>

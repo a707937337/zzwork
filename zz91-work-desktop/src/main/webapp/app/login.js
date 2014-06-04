@@ -74,7 +74,7 @@ com.zz91.zzwork.UserLoginWin = function(doSuccess){
 		width:300,
 		height:150,
 		closable:false,
-		title:"阿思拓 工作平台 - 登录",
+		title:"工作平台 - 登录",
 		modal:true,
 		items:[form],
 		keys:[{

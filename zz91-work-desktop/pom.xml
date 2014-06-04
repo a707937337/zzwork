@@ -10,7 +10,7 @@
 	<groupId>com.zz91</groupId>
 	<artifactId>zz91-work-desktop</artifactId>
 	<packaging>war</packaging>
-	<version>1.2.4</version>
+	<version>1.2.5</version>
 	<name>zz91 work prlatform</name>
 	<dependencies>
 		<dependency>
@@ -22,7 +22,7 @@
 			<groupId>com.zz91</groupId>
 			<artifactId>zz91-utils</artifactId>
 		</dependency>
-		<!--ibatis-mySQL-->
+		<!--ibatis-mySQL -->
 		<dependency>
 			<groupId>org.apache.ibatis</groupId>
 			<artifactId>ibatis-sqlmap</artifactId>
@@ -31,7 +31,7 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 		</dependency>
-		<!--Spring 支持-->
+		<!--Spring 支持 -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
@@ -78,7 +78,7 @@
 			<artifactId>json-lib</artifactId>
 			<classifier>jdk15</classifier>
 		</dependency>
-		
+
 		<!--common -->
 		<dependency>
 			<groupId>commons-lang</groupId>
@@ -98,7 +98,7 @@
 		</dependency>
 		<dependency>
 			<groupId>net.spy</groupId>
-			<artifactId>memcached</artifactId>
+			<artifactId>spymemcached</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -109,12 +109,17 @@
 			<artifactId>poi</artifactId>
 		</dependency>
 		<dependency>
-		  <groupId>jexcelapi</groupId>
-		  <artifactId>jxl</artifactId>
+			<groupId>jexcelapi</groupId>
+			<artifactId>jxl</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
-		
+
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -125,9 +130,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		<!-- 
-		<finalName>zz91-work-desktop</finalName>
-		 -->
+		<!-- <finalName>zz91-work-desktop</finalName> -->
 	</build>
 
 </project>

@@ -19,6 +19,8 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 
+import com.zz91.util.lang.StringUtils;
+
 public class HttpUtils {
 
 	// private final static Logger LOG = Logger.getLogger(HttpUtils.class);
@@ -127,6 +129,9 @@ public class HttpUtils {
 	 */
 	public String getCookie(HttpServletRequest request, String key,
 			String domain) {
+		
+//		domain = StringUtils.isEmpty(domain)?request.getServerName():domain;
+		
 		if (key == null || "".equals(key)) {
 			return null;
 		}
@@ -135,7 +140,13 @@ public class HttpUtils {
 			for (int i = 0; i < cookies.length; i++) {
 				Cookie c = cookies[i];
 				if (key.equals(c.getName())) {
-					return c.getValue();
+//					if(StringUtils.isNotEmpty(domain) ){
+//						if(domain.equals(c.getDomain())){
+							return c.getValue();
+//						}
+//					}else{
+//						return c.getValue();
+//					}
 				}
 			}
 		}
