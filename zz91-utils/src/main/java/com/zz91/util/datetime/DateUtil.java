@@ -434,6 +434,8 @@ public class DateUtil {
 		System.out.println("DST_OFFSET: " + (calendar.get(Calendar.DST_OFFSET) / (60 * 60 * 1000))); // in hours
 		
 		System.out.println(toString(new Date(getTheDayZero(new Date(),0)*1000),"yyyy-MM-dd HH:mm:ss"));
+		
+		//System.out.println(DateUtil.getIntervalDays(DateUtil.getDate("2014-02-14", "yyyy-MM-dd"), DateUtil.getDate("2012-11-13", "yyyy-MM-dd")));
 	}
 
 	/**
